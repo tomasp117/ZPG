@@ -89,7 +89,7 @@ int main(void)
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	float ratio = width / (float)height;
+	float ratio = width / (float)height; 
 	glViewport(0, 0, width, height);
 
 
