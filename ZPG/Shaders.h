@@ -14,7 +14,8 @@ public:
 	GLuint createShaderProgram(const char* vertex_shader, const char* fragment_shader);
 	void checkLinking(GLuint shader);
 	void drawShaderArrays();
-	GLuint getShaderProgram() const;
+	void useProgram();
+	//GLuint getShaderProgram() const;
 	void setShaderProgram(GLuint program);
 };
 

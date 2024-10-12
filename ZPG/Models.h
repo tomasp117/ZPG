@@ -4,6 +4,6 @@
 class Models
 {
 public:
-	GLuint createBuffer(float* points, size_t size);
+	GLuint createBuffer(const float* points, size_t size);
 };
 

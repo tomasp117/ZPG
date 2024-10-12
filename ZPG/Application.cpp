@@ -77,11 +77,13 @@ void Application::initialization()
 
 void Application::run()
 {
+	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		for (size_t i = 0; i < this->shaders.size(); i++) {
-			glUseProgram(this->shaders[i].getShaderProgram());
+			//glUseProgram(this->shaders[i].getShaderProgram());
+			this->shaders[i].useProgram();
 			glBindVertexArray(models[i]);
 			this->shaders[i].drawShaderArrays();
 		}
@@ -114,7 +116,7 @@ void Application::createShaders()
 		"void main () {"
 		"     frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
 		"}";
-
+	/*
 	Shaders s(GL_TRIANGLES, 0, 3);
 	GLuint shaderProgram = s.createShaderProgram(vertex_shader, fragment_shader);
 	s.checkLinking(shaderProgram);
@@ -129,15 +131,53 @@ void Application::createShaders()
 		"     frag_colour = vec4 (0.0, 0.5, 0.0, 1.0);"
 		"}";
 
+
+
 	Shaders s_square(GL_TRIANGLES, 0, 6);
 	GLuint shaderProgram_square = s_square.createShaderProgram(vertex_shader, fragment_shader);
 	s_square.checkLinking(shaderProgram_square);
 	s_square.setShaderProgram(shaderProgram_square);
-	this->shaders.push_back(s_square);
+	this->shaders.push_back(s_square); */
+
+	const char* sphere_vertex_shader =
+		"#version 330\n"
+		"layout(location=0) in vec3 vp;\n" 
+		"layout(location=1) in vec3 vn;\n" 
+		"out vec3 fragNormal;\n" 
+		"out vec3 fragPos;\n"
+		"void main () {\n"
+		"     gl_Position = vec4(vp, 1.0);\n"
+		"     fragNormal = vn;\n"  
+		"	  fragPos = vp;\n"
+		"}";
+
+	const char* fragment_shader_sphere =
+		"#version 330\n"
+		"in vec3 fragNormal;\n"
+		"in vec3 fragPos;\n"
+		"out vec4 frag_colour;\n"
+		"void main () {\n"
+		"     vec3 normalizedNormal = normalize(fragNormal);\n" 
+		"     frag_colour = vec4(fragPos, 1.0);\n"  
+		"}";
+
+
+
+
+	Shaders s_sphere(GL_TRIANGLES, 0, 2880);
+	GLuint shaderProgram_sphere = s_sphere.createShaderProgram(sphere_vertex_shader, fragment_shader_sphere);
+	s_sphere.checkLinking(shaderProgram_sphere);
+	s_sphere.setShaderProgram(shaderProgram_sphere);
+	this->shaders.push_back(s_sphere);
+
+
+
+
 }
 
 void Application::createModels()
 {
+	/*
 	float points[] = {
 	0.0f, 0.5f, 0.0f,
 	0.5f, -0.5f, 0.0f,
@@ -169,6 +209,24 @@ void Application::createModels()
 	GLuint squareVAO = squareModel.createBuffer(squarePoints, squareSize);
 
 	this->models.push_back(squareVAO);
+	*/
+	/*
+	float a[] = {
+	 -.5f, -.5f, .5f,  0, 0, 1,
+	 -.5f, .5f, .5f,  0, 0, 1,
+	   .5f, .5f, .5f,  0, 0, 1,
+	   .5f, -.5f, .5f,  0, 0, 1 };
+
+*/
+
+
+	size_t size_sphere = sizeof(sphere);
+
+	Models spehere_model;
+	GLuint sphereVAO = spehere_model.createBuffer(sphere, size_sphere);
+
+	this->models.push_back(sphereVAO);
+
 
 }
 

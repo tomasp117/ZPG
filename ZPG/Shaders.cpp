@@ -48,9 +48,15 @@ void Shaders::drawShaderArrays()
 	glDrawArrays(this->mode, this->first, this->count);
 }
 
+void Shaders::useProgram()
+{
+	glUseProgram(this->shaderProgram);
+}
+/*
 GLuint Shaders::getShaderProgram() const {
 	return this->shaderProgram;
-}
+}*/
+
 
 void Shaders::setShaderProgram(GLuint program) {
 	this->shaderProgram = program;

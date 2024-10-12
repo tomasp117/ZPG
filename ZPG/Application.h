@@ -18,6 +18,7 @@
 
 #include "Shaders.h"
 #include "Models.h"
+#include "sphere.h"
 
 using namespace std;
 class Application
