@@ -3,6 +3,7 @@
 
 Shaders::Shaders(GLenum mode, GLint first, GLsizei count)
 {
+	shaderProgram = 0;
 	this->mode = mode;
 	this->first = first;
 	this->count = count;
@@ -19,11 +20,11 @@ GLuint Shaders::createShaderProgram(const char* vertex_shader, const char* fragm
 	glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
 	glCompileShader(fragmentShader);
 
-	GLuint shaderProgram = glCreateProgram();
+	this->shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, fragmentShader);
 	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
-
+	checkLinking(this->shaderProgram);
 	return shaderProgram;
 }
 
@@ -48,9 +49,15 @@ void Shaders::drawShaderArrays()
 	glDrawArrays(this->mode, this->first, this->count);
 }
 
-void Shaders::useProgram()
+void Shaders::useProgram(glm::mat4& M)
 {
+	GLint idModelTransform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
+
+	if (idModelTransform == -1) {
+		printf("Error: Cannot find uniform 'modelMatrix' in shader!\n");
+	}
 	glUseProgram(this->shaderProgram);
+	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
 }
 /*
 GLuint Shaders::getShaderProgram() const {

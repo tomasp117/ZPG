@@ -77,15 +77,30 @@ void Application::initialization()
 
 void Application::run()
 {
+	glm::mat4 C = glm::mat4(1.0f);
+
+	vector<glm::mat4> v;
+
+	
+	C = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+	C = glm::translate(C, glm::vec3(-5.0f, 0.0f, 0.0f));
+	
+
+
+	v.push_back(C);
+
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		for (size_t i = 0; i < this->shaders.size(); i++) {
 			//glUseProgram(this->shaders[i].getShaderProgram());
-			this->shaders[i].useProgram();
-			glBindVertexArray(models[i]);
-			this->shaders[i].drawShaderArrays();
+			for (int j = 0; j < this->treeTransforms.size(); j++) {
+				this->shaders[i].useProgram(this->treeTransforms[j]);
+				this->models[i].bindVAO();
+				this->shaders[i].drawShaderArrays();
+			}
+			
 		}
 		//glDrawArrays(GL_TRIANGLES, 0, 6); // two triangles
 		// update other events like input handling
@@ -101,7 +116,7 @@ void Application::run()
 
 void Application::createShaders()
 {
-	const char* vertex_shader =
+	/*const char* vertex_shader =
 		"#version 330\n"
 		"layout(location=0) in vec3 vp;"
 		"void main () {"
@@ -115,7 +130,7 @@ void Application::createShaders()
 		"out vec4 frag_colour;"
 		"void main () {"
 		"     frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
-		"}";
+		"}";*/
 	/*
 	Shaders s(GL_TRIANGLES, 0, 3);
 	GLuint shaderProgram = s.createShaderProgram(vertex_shader, fragment_shader);
@@ -146,12 +161,25 @@ void Application::createShaders()
 		"out vec3 fragNormal;\n" 
 		"out vec3 fragPos;\n"
 		"void main () {\n"
-		"     gl_Position = vec4(vp, 1.0);\n"
+		"     gl_Position =vec4(vp, 1.0);\n"
 		"     fragNormal = vn;\n"  
 		"	  fragPos = vp;\n"
 		"}";
 
-	const char* fragment_shader_sphere =
+	const char* vertex_shader =
+		"#version 330\n"
+		"layout(location=0) in vec3 vp;\n"
+		"layout(location=1) in vec3 vn;\n"
+		"out vec3 fragNormal;\n"
+		"out vec3 fragPos;\n"
+		"uniform mat4 modelMatrix;\n"
+		"void main () {\n"
+		"     gl_Position = modelMatrix * vec4(vp, 1.0);\n"
+		"     fragNormal = vn;\n"
+		"	  fragPos = vp;\n"
+		"}";
+
+	const char* fragment_shader =
 		"#version 330\n"
 		"in vec3 fragNormal;\n"
 		"in vec3 fragPos;\n"
@@ -160,17 +188,39 @@ void Application::createShaders()
 		"     vec3 normalizedNormal = normalize(fragNormal);\n" 
 		"     frag_colour = vec4(fragPos, 1.0);\n"  
 		"}";
+	const char* fragment_shader2 =
+		"#version 330\n"
+		"in vec3 fragNormal;\n"
+		"in vec3 fragPos;\n"
+		"out vec4 frag_colour;\n"
+		"void main () {\n"
+		"     frag_colour = vec4(1.0, 1.0, 1.0, 1.0);  // Nastavení èistì bílé barvy\n"
+		"}\n";
 
 
-
-
+	/*
 	Shaders s_sphere(GL_TRIANGLES, 0, 2880);
 	GLuint shaderProgram_sphere = s_sphere.createShaderProgram(sphere_vertex_shader, fragment_shader_sphere);
 	s_sphere.checkLinking(shaderProgram_sphere);
 	s_sphere.setShaderProgram(shaderProgram_sphere);
-	this->shaders.push_back(s_sphere);
+	this->shaders.push_back(s_sphere);*/
 
+	Shaders s_tree(GL_TRIANGLES, 0, 92814);
+	GLuint shaderProgram_tree = s_tree.createShaderProgram(vertex_shader, fragment_shader);
+	s_tree.setShaderProgram(shaderProgram_tree);
+	this->shaders.push_back(s_tree);
 
+	srand(time(NULL));
+	for (int i = 0; i < 10; i++) {
+		glm::mat4 M = glm::mat4(1.0f);
+		float scale_size = 0.05f + (rand() % 6) / 100.0f;
+		M = glm::scale(M, glm::vec3(scale_size));
+		float posX = -5.0f + rand() % 11;
+		float posY = -8.0f + rand() % 12;
+		glm::vec3 randomPos(posX, posY, 0.0f);
+		M = glm::translate(M, randomPos);
+		this->treeTransforms.push_back(M);
+	}
 
 
 }
@@ -219,14 +269,18 @@ void Application::createModels()
 
 */
 
-
+	size_t size_tree = sizeof(tree);
+	Models tree_model;
+	tree_model.createBuffer(tree, size_tree);
+	this->models.push_back(tree_model);
+	/*
 	size_t size_sphere = sizeof(sphere);
 
 	Models spehere_model;
 	GLuint sphereVAO = spehere_model.createBuffer(sphere, size_sphere);
 
 	this->models.push_back(sphereVAO);
-
+	*/
 
 }
 

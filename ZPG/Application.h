@@ -19,19 +19,21 @@
 #include "Shaders.h"
 #include "Models.h"
 #include "sphere.h"
+#include "tree.h"
 
+#include <random>
 using namespace std;
 class Application
 {
 
 private:
 	GLFWwindow* window;
-	GLuint VAO;
+	//GLuint VAO;
 
 	//vector<GLuint> shaders;
 	vector<Shaders> shaders;
-	vector<GLuint> models;
-
+	vector<Models> models;
+	vector<glm::mat4> treeTransforms;
 
 public:
 
