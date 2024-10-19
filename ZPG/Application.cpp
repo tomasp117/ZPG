@@ -1,6 +1,6 @@
 #include "Application.h"
-#include "Models.h"
-#include "Shaders.h"
+
+
 
 void Application::error_callback(int error, const char* description) { fputs(description, stderr); }
 
@@ -8,6 +8,50 @@ void Application::key_callback(GLFWwindow* window, int key, int scancode, int ac
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	
+	Application* app = (Application*)glfwGetWindowUserPointer(window);
+	Scene& scene = app->scenes[app->active_scene];
+	vector<DrawableObject>& objects = scene.getObjects();
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+		printf("Switching scene\n");
+		app->switchScene();
+	}
+
+	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+		for (auto& object : objects) {
+			Transformation currentTransformation = object.getTransformation(); 
+
+
+			if (key == GLFW_KEY_W) {
+				currentTransformation.translate(glm::vec3(0.0f, 0.1f, 0.0f));
+				object.setTransformation(currentTransformation); 
+			}
+			else if (key == GLFW_KEY_S) {
+				currentTransformation.translate(glm::vec3(0.0f, -0.1f, 0.0f));
+				object.setTransformation(currentTransformation);
+			}
+
+			if (key == GLFW_KEY_A) {
+				currentTransformation.rotate(1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				object.setTransformation(currentTransformation);
+			}
+			else if (key == GLFW_KEY_D) {
+				currentTransformation.rotate(-1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+				object.setTransformation(currentTransformation);
+			}
+
+			if (key == GLFW_KEY_R) {
+				currentTransformation.scale(glm::vec3(1.01f, 1.01f, 1.01f));
+				object.setTransformation(currentTransformation);
+			}
+			else if (key == GLFW_KEY_F) {
+				currentTransformation.scale(glm::vec3(0.99f, 0.99f, 0.99f));
+				object.setTransformation(currentTransformation);
+			}
+		}
+	}
+
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 }
 
@@ -24,6 +68,7 @@ void Application::cursor_callback(GLFWwindow* window, double x, double y) { prin
 
 void Application::button_callback(GLFWwindow* window, int button, int action, int mode) {
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
+	
 }
 
 void Application::initialization()
@@ -62,6 +107,8 @@ void Application::initialization()
 	glViewport(0, 0, width, height);
 
 	// Sets the key callback
+	glfwSetWindowUserPointer(this->window, this); // Adding pointer to Application
+
 	glfwSetKeyCallback(this->window, key_callback);
 
 	glfwSetCursorPosCallback(this->window, cursor_callback);
@@ -73,7 +120,134 @@ void Application::initialization()
 	glfwSetWindowIconifyCallback(this->window, window_iconify_callback);
 
 	glfwSetWindowSizeCallback(this->window, window_size_callback);
+
+	
+	this->active_scene = 0;
+	scenes.push_back(Scene());
+	scenes.push_back(Scene());
+
+	// Vertex shader
+	const char* vertex_shader =
+		"#version 330\n"
+		"layout(location=0) in vec3 vp;\n"
+		"layout(location=1) in vec3 vn;\n"
+		"out vec3 fragNormal;\n"
+		//"out vec3 fragPos;\n"
+		"uniform mat4 modelMatrix;\n"
+		"void main () {\n"
+		"     gl_Position = modelMatrix * vec4(vp, 1.0);\n"
+		"     fragNormal = vn;\n"
+		//"     fragPos = vp;\n"
+		"}\n";
+
+	// Fragment shader Normal
+	const char* fragment_shader =
+		"#version 330\n"
+		"in vec3 fragNormal;\n"
+		//"in vec3 fragPos;\n"
+		"out vec4 frag_colour;\n"
+		"void main () {\n"
+		"     frag_colour = vec4(fragNormal, 1.0);\n"  // Barevné nastavení podle pozice
+		"}\n";
+
+	// Fragment shader2
+	const char* fragment_shader2 =
+		"#version 330\n"
+		"out vec4 frag_colour;\n"
+		"void main () {\n"
+		"     frag_colour = vec4(1.0, 1.0, 1.0, 1.0);  // Nastavení èistì bílé barvy\n"
+		"}\n";
+
+
+	srand(time(NULL));
+	//Scene 1 
+	// 
+	// Trees
+	ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
+	s_tree.createShaderProgram(vertex_shader, fragment_shader);
+	this->shaders.push_back(s_tree);
+
+	size_t size_tree = sizeof(tree);
+	Models tree_model;
+	tree_model.createBuffer(tree, size_tree, true);
+	this->models.push_back(tree_model);
+
+	DrawableObject tree_object(tree_model, s_tree);
+
+	Transformation trans;
+	trans.scale(glm::vec3(0.1f));
+
+	tree_object.setTransformation(trans);
+	scenes[0].addObject(tree_object);
+
+	// Bushes
+	ShaderProgram s_bush(GL_TRIANGLES, 0, 8730);
+	s_bush.createShaderProgram(vertex_shader, fragment_shader2);
+	
+	size_t size_bush = sizeof(bushes);
+	Models bush_model;
+	bush_model.createBuffer(bushes, size_bush, true);
+	this->models.push_back(bush_model);
+
+	DrawableObject bush_object(bush_model, s_bush);
+
+	Transformation trans2;
+	trans2.scale(glm::vec3(0.5));
+	trans2.translate(glm::vec3(0.5f, 0.2f, 0.0f));
+	bush_object.setTransformation(trans2);
+	scenes[0].addObject(bush_object);
+	
+	//Scene 2 
+	// 
+
+	// Bushes
+	ShaderProgram s_bush_scene2(GL_TRIANGLES, 0, 8730);
+	s_bush_scene2.createShaderProgram(vertex_shader, fragment_shader);
+
+
+
+	for (int i = 0; i < 10; ++i) {
+		// Random tree transformations
+		float scale_size_tree = 0.05f + (rand() % 6) / 100.0f;
+		float posX_tree = -12.5f + rand() % 21; 
+		float posY_tree = 0.5f + (rand() % 5) / 10.0f;
+		glm::vec3 randomPos_tree(posX_tree, posY_tree, 0.0f);
+		float random_rotation_tree = (rand() % 31) - 15;
+
+		// Random tree
+		DrawableObject tree_object(tree_model, s_tree);
+		Transformation tree_trans;
+
+		tree_trans.scale(glm::vec3(scale_size_tree));
+		tree_trans.translate(glm::vec3(randomPos_tree));
+		tree_trans.rotate(random_rotation_tree, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		tree_object.setTransformation(tree_trans);
+		scenes[1].addObject(tree_object);
+
+		// Random bush transformations
+		float scale_size_bush = 0.05f + (rand() % 6) / 100.0f;
+		float posX_bush = -12.5f + rand() % 21;
+		float posY_bush = -0.5f - (rand() % 3) / 10.0f;
+		glm::vec3 randomPos_bush(posX_bush, posY_bush, 0.0f);
+
+		// Random bush
+		DrawableObject bush_object(bush_model, s_bush_scene2);
+		Transformation bush_trans;
+
+		bush_trans.scale(glm::vec3(scale_size_bush));
+		bush_trans.translate(glm::vec3(randomPos_bush));
+		 
+		bush_object.setTransformation(bush_trans);
+		scenes[1].addObject(bush_object);
+	}
+
 }
+
+void Application::switchScene() {
+	this->active_scene = (this->active_scene + 1) % scenes.size();
+}
+
 
 void Application::run()
 {
@@ -93,15 +267,16 @@ void Application::run()
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		for (size_t i = 0; i < this->shaders.size(); i++) {
-			//glUseProgram(this->shaders[i].getShaderProgram());
-			for (int j = 0; j < this->treeTransforms.size(); j++) {
-				this->shaders[i].useProgram(this->treeTransforms[j]);
-				this->models[i].bindVAO();
-				this->shaders[i].drawShaderArrays();
-			}
-			
-		}
+		//for (size_t i = 0; i < this->shaders.size(); i++) {
+		//	//glUseProgram(this->shaders[i].getShaderProgram());
+		//	for (int j = 0; j < this->treeTransforms.size(); j++) {
+		//		this->shaders[i].useProgram(this->treeTransforms[j]);
+		//		this->models[i].bindVAO();
+		//		this->shaders[i].drawShaderArrays();
+		//	}
+		//	
+		//}
+		scenes[this->active_scene].render();
 		//glDrawArrays(GL_TRIANGLES, 0, 6); // two triangles
 		// update other events like input handling
 		glfwPollEvents();
@@ -113,46 +288,9 @@ void Application::run()
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }
-
+/*
 void Application::createShaders()
 {
-	/*const char* vertex_shader =
-		"#version 330\n"
-		"layout(location=0) in vec3 vp;"
-		"void main () {"
-		"     gl_Position = vec4 (vp, 1.0);"
-		"}";
-
-
-
-	const char* fragment_shader =
-		"#version 330\n"
-		"out vec4 frag_colour;"
-		"void main () {"
-		"     frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
-		"}";*/
-	/*
-	Shaders s(GL_TRIANGLES, 0, 3);
-	GLuint shaderProgram = s.createShaderProgram(vertex_shader, fragment_shader);
-	s.checkLinking(shaderProgram);
-	s.setShaderProgram(shaderProgram);
-
-	this->shaders.push_back(s);
-
-	const char* fragment_shader_square =
-		"#version 330\n"
-		"out vec4 frag_colour;"
-		"void main () {"
-		"     frag_colour = vec4 (0.0, 0.5, 0.0, 1.0);"
-		"}";
-
-
-
-	Shaders s_square(GL_TRIANGLES, 0, 6);
-	GLuint shaderProgram_square = s_square.createShaderProgram(vertex_shader, fragment_shader);
-	s_square.checkLinking(shaderProgram_square);
-	s_square.setShaderProgram(shaderProgram_square);
-	this->shaders.push_back(s_square); */
 
 	const char* sphere_vertex_shader =
 		"#version 330\n"
@@ -198,14 +336,7 @@ void Application::createShaders()
 		"}\n";
 
 
-	/*
-	Shaders s_sphere(GL_TRIANGLES, 0, 2880);
-	GLuint shaderProgram_sphere = s_sphere.createShaderProgram(sphere_vertex_shader, fragment_shader_sphere);
-	s_sphere.checkLinking(shaderProgram_sphere);
-	s_sphere.setShaderProgram(shaderProgram_sphere);
-	this->shaders.push_back(s_sphere);*/
-
-	Shaders s_tree(GL_TRIANGLES, 0, 92814);
+	ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
 	GLuint shaderProgram_tree = s_tree.createShaderProgram(vertex_shader, fragment_shader);
 	s_tree.setShaderProgram(shaderProgram_tree);
 	this->shaders.push_back(s_tree);
@@ -227,60 +358,9 @@ void Application::createShaders()
 
 void Application::createModels()
 {
-	/*
-	float points[] = {
-	0.0f, 0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	-0.5f, -0.5f, 0.0f
-	};
-
-
-
-	size_t size = sizeof(points);
-
-	Models m;
-	GLuint VAO = m.createBuffer(points, size);
-
-	this->models.push_back(VAO);
-
-	float squarePoints[] = {
-		0.25f,  0.5f, 0.0f,
-		0.30f,  0.5f, 0.0f,
-		0.30f,  0.45f, 0.0f,
-
-		0.25f,  0.5f, 0.0f,
-		0.30f,  0.45f, 0.0f,
-		0.25f,  0.45f, 0.0f
-	};
-
-	size_t squareSize = sizeof(squarePoints);
-
-	Models squareModel;
-	GLuint squareVAO = squareModel.createBuffer(squarePoints, squareSize);
-
-	this->models.push_back(squareVAO);
-	*/
-	/*
-	float a[] = {
-	 -.5f, -.5f, .5f,  0, 0, 1,
-	 -.5f, .5f, .5f,  0, 0, 1,
-	   .5f, .5f, .5f,  0, 0, 1,
-	   .5f, -.5f, .5f,  0, 0, 1 };
-
-*/
-
 	size_t size_tree = sizeof(tree);
 	Models tree_model;
 	tree_model.createBuffer(tree, size_tree);
 	this->models.push_back(tree_model);
-	/*
-	size_t size_sphere = sizeof(sphere);
-
-	Models spehere_model;
-	GLuint sphereVAO = spehere_model.createBuffer(sphere, size_sphere);
-
-	this->models.push_back(sphereVAO);
-	*/
-
 }
-
+*/

@@ -7,7 +7,10 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
-class Shaders
+
+#include <vector>
+#include <iostream>
+class ShaderProgram
 {
 private:
 	GLenum mode;
@@ -16,11 +19,11 @@ private:
 	GLuint shaderProgram;
 
 public:
-	Shaders(GLenum mode, GLint first, GLsizei count);
-	GLuint createShaderProgram(const char* vertex_shader, const char* fragment_shader);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count);
+	void createShaderProgram(const char* vertex_shader, const char* fragment_shader);
 	void checkLinking(GLuint shader);
 	void drawShaderArrays();
-	void useProgram(glm::mat4& M);
+	void useProgram(const glm::mat4& M);
 	//GLuint getShaderProgram() const;
 	void setShaderProgram(GLuint program);
 };

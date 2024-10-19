@@ -1,7 +1,7 @@
-#include "Shaders.h"
+#include "ShaderProgram.h"
 #include <stdlib.h>
 
-Shaders::Shaders(GLenum mode, GLint first, GLsizei count)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count)
 {
 	shaderProgram = 0;
 	this->mode = mode;
@@ -9,7 +9,7 @@ Shaders::Shaders(GLenum mode, GLint first, GLsizei count)
 	this->count = count;
 }
 
-GLuint Shaders::createShaderProgram(const char* vertex_shader, const char* fragment_shader)
+void ShaderProgram::createShaderProgram(const char* vertex_shader, const char* fragment_shader)
 {
 	//create and compile shaders
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -25,10 +25,13 @@ GLuint Shaders::createShaderProgram(const char* vertex_shader, const char* fragm
 	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
 	checkLinking(this->shaderProgram);
-	return shaderProgram;
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	
 }
 
-void Shaders::checkLinking(GLuint shader)
+void ShaderProgram::checkLinking(GLuint shader)
 {
 	GLint status;
 	glGetProgramiv(shader, GL_LINK_STATUS, &status);
@@ -44,20 +47,16 @@ void Shaders::checkLinking(GLuint shader)
 	}
 }
 
-void Shaders::drawShaderArrays()
+void ShaderProgram::drawShaderArrays()
 {
 	glDrawArrays(this->mode, this->first, this->count);
 }
 
-void Shaders::useProgram(glm::mat4& M)
+void ShaderProgram::useProgram(const glm::mat4& M)
 {
-	GLint idModelTransform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
-
-	if (idModelTransform == -1) {
-		printf("Error: Cannot find uniform 'modelMatrix' in shader!\n");
-	}
+	GLuint uniform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
 	glUseProgram(this->shaderProgram);
-	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, &M[0][0]);
 }
 /*
 GLuint Shaders::getShaderProgram() const {
@@ -65,6 +64,6 @@ GLuint Shaders::getShaderProgram() const {
 }*/
 
 
-void Shaders::setShaderProgram(GLuint program) {
+void ShaderProgram::setShaderProgram(GLuint program) {
 	this->shaderProgram = program;
 }

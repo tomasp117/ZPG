@@ -12,7 +12,8 @@ int main(void)
     app->initialization(); //OpenGL inicialization
 
     //Loading scene
-    app->createShaders();
-    app->createModels();
+    /*app->createShaders();
+    app->createModels();*/
+
     app->run(); //Rendering 
 }

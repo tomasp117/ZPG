@@ -16,10 +16,14 @@
 #include <stdio.h>
 #include <vector>
 
-#include "Shaders.h"
+#include "ShaderProgram.h"
 #include "Models.h"
 #include "sphere.h"
 #include "tree.h"
+#include "bushes.h"
+#include "Scene.h"
+#include "DrawableObject.h"
+#include "Transformation.h"
 
 #include <random>
 using namespace std;
@@ -31,15 +35,20 @@ private:
 	//GLuint VAO;
 
 	//vector<GLuint> shaders;
-	vector<Shaders> shaders;
+	vector<ShaderProgram> shaders;
 	vector<Models> models;
 	vector<glm::mat4> treeTransforms;
+
+	vector<Scene> scenes;
+
+	int active_scene;
 
 public:
 
 	void initialization();
-	void createShaders();  
-	void createModels();    
+	void switchScene();
+	/*void createShaders();
+	void createModels();   */ 
 	void run();
 
 	static void error_callback(int error, const char* description);
