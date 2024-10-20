@@ -52,12 +52,22 @@ void ShaderProgram::drawShaderArrays()
 	glDrawArrays(this->mode, this->first, this->count);
 }
 
-void ShaderProgram::useProgram(const glm::mat4& M)
+//void ShaderProgram::useProgram(const glm::mat4& M)
+//{
+//	GLuint uniform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
+//	glUseProgram(this->shaderProgram);
+//	setUniform("modelMatrix", M);
+//	glUniformMatrix4fv(uniform, 1, GL_FALSE, &M[0][0]);
+//}
+
+void ShaderProgram::useProgram()
 {
 	GLuint uniform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
 	glUseProgram(this->shaderProgram);
+	//setUniform("modelMatrix", M);
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, &M[0][0]);
 }
+
 /*
 GLuint Shaders::getShaderProgram() const {
 	return this->shaderProgram;
@@ -67,3 +77,78 @@ GLuint Shaders::getShaderProgram() const {
 void ShaderProgram::setShaderProgram(GLuint program) {
 	this->shaderProgram = program;
 }
+
+//void ShaderProgram::update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+//{
+//	GLuint viewLoc = glGetUniformLocation(shaderProgram, "viewMatrix");
+//	GLuint projLoc = glGetUniformLocation(shaderProgram, "projectionMatrix");
+//
+//	// Aktivace shader programu
+//	glUseProgram(shaderProgram);
+//
+//	// Nastavení nových matic
+//	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+//	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+//}
+
+//// Nastavení uniform pro float
+//void ShaderProgram::setUniform(const std::string& name, float value) const {
+//	GLuint location = glGetUniformLocation(shaderProgram, name.c_str());
+//	if (location != -1) {
+//		glUniform1f(location, value);
+//	}
+//}
+//
+//// Nastavení uniform pro int
+//void ShaderProgram::setUniform(const std::string& name, int value) const {
+//	GLuint location = glGetUniformLocation(shaderProgram, name.c_str());
+//	if (location != -1) {
+//		glUniform1i(location, value);
+//	}
+//}
+//
+//// Nastavení uniform pro glm::mat4
+//void ShaderProgram::setUniform(const std::string& name, const glm::mat4& matrix) const {
+//	GLuint location = glGetUniformLocation(shaderProgram, name.c_str());
+//	if (location != -1) {
+//		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+//	}
+//}
+//
+//// Nastavení uniform pro glm::vec3
+//void ShaderProgram::setUniform(const std::string& name, const glm::vec3& vec) const {
+//	GLuint location = glGetUniformLocation(shaderProgram, name.c_str());
+//	if (location != -1) {
+//		glUniform3fv(location, 1, glm::value_ptr(vec));
+//	}
+//}
+
+void ShaderProgram::SetMatrix(glm::mat4 Matrix)
+{
+	this->M = Matrix;
+}
+
+void ShaderProgram::SetViewMatrix(glm::mat4& viewMatrix)
+{
+	//glm::mat4 viewMatrix = this->camera->getViewMatrix();
+
+	GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
+	if (viewLoc == -1) {
+		printf("Error: Cannot find uniform 'viewMatrix' in shader!\n");
+	}
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &viewMatrix[0][0]);
+}
+
+void ShaderProgram::SetProjectionMatrix(glm::mat4& projectionMatrix)
+{
+	//glm::mat4 projectionMatrix = this->camera->getProjectionMatrix();
+
+	GLint projectionLoc = glGetUniformLocation(this->shaderProgram, "projectionMatrix");
+	if (projectionLoc == -1) {
+		printf("Error: Cannot find uniform 'projectionMatrix' in shader!\n");
+	}
+
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projectionMatrix[0][0]);
+}
+
+

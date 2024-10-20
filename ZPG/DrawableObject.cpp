@@ -16,6 +16,10 @@ Transformation DrawableObject::getTransformation() const
 {
     return this->transformation;
 }
+ShaderProgram& DrawableObject::getShader()
+{
+    return this->shaderProgram;
+}
 /*
 Transformation& DrawableObject::getTransformation()
 {
@@ -28,7 +32,9 @@ DrawableObject::DrawableObject(Models& model, ShaderProgram& shader) : model(mod
 
 void DrawableObject::render() {
     // Use the shader program
-    this->shaderProgram.useProgram(this->transformation.getMatrix());
+    this->shaderProgram.useProgram();
+
+    this->shaderProgram.SetMatrix(transformation.getMatrix());
 
     // Bind the model's VAO
     this->model.bindVAO();

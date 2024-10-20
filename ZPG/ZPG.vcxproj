@@ -131,6 +131,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Camera2.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Models.cpp" />
@@ -141,10 +143,14 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="bushes.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Camera2.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="gift.h" />
     <ClInclude Include="Models.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="plain.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="sphere.h" />
@@ -152,6 +158,9 @@
     <ClInclude Include="suzi_smooth.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="tree.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ZPG.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

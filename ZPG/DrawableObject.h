@@ -20,5 +20,6 @@ public:
     void setModel(const Models& newModel);      // Set the model (geometry)
     void setTransformation(const Transformation& newTransformation); // Set the transformations
     Transformation getTransformation() const;
+    ShaderProgram& getShader();
 };
 

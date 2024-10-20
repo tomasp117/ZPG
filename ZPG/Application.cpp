@@ -19,7 +19,7 @@ void Application::key_callback(GLFWwindow* window, int key, int scancode, int ac
 	}
 
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-		for (auto& object : objects) {
+		/*for (auto& object : objects) {
 			Transformation currentTransformation = object.getTransformation(); 
 
 
@@ -49,6 +49,27 @@ void Application::key_callback(GLFWwindow* window, int key, int scancode, int ac
 				currentTransformation.scale(glm::vec3(0.99f, 0.99f, 0.99f));
 				object.setTransformation(currentTransformation);
 			}
+		}*/
+
+		float cameraSpeed = 2.5f;  // Default speed
+		if (mods == GLFW_MOD_SHIFT) {
+			cameraSpeed = 5.0f;  // Faster when Shift is pressed
+		}
+
+		// Ovládání pohybu kamery pomocí kláves
+		if (key == GLFW_KEY_W) {
+			printf("fasgbjfhafkjasfjkhafukhjaf");
+			scene.getCamera()->moveForward(cameraSpeed);
+			
+		}
+		if (key == GLFW_KEY_S) {
+			scene.getCamera()->moveBackward(cameraSpeed);
+		}
+		if (key == GLFW_KEY_A) {
+			scene.getCamera()->moveLeft(cameraSpeed);
+		}
+		if (key == GLFW_KEY_D) {
+			scene.getCamera()->moveRight(cameraSpeed);
 		}
 	}
 
@@ -121,13 +142,30 @@ void Application::initialization()
 
 	glfwSetWindowSizeCallback(this->window, window_size_callback);
 
-	
+	Camera2* camera = new Camera2(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
+	Camera2* camera2 = new Camera2(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
+
 	this->active_scene = 0;
-	scenes.push_back(Scene());
-	scenes.push_back(Scene());
+	scenes.push_back(Scene(camera));
+	scenes.push_back(Scene(camera2));
 
 	// Vertex shader
 	const char* vertex_shader =
+		"#version 330\n"
+		"layout(location=0) in vec3 vp;\n"
+		"layout(location=1) in vec3 vn;\n"
+		"out vec3 fragNormal;\n"
+		//"out vec3 fragPos;\n"
+		"uniform mat4 modelMatrix;\n"
+		"uniform mat4 viewMatrix;\n"
+		"uniform mat4 projectionMatrix;\n"
+		"void main () {\n"
+		"     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);\n"
+		"     fragNormal = vn;\n"
+		//"     fragPos = vp;\n"
+		"}\n";
+
+	const char* vertex_shader_2D =
 		"#version 330\n"
 		"layout(location=0) in vec3 vp;\n"
 		"layout(location=1) in vec3 vn;\n"
@@ -163,33 +201,39 @@ void Application::initialization()
 	//Scene 1 
 	// 
 	// Trees
-	ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
+
+	ShaderProgram s_tree_2D(GL_TRIANGLES, 0, 92814);  // Pøedpokládám, že GL_TRIANGLES a další parametry jsou správnì
+	s_tree_2D.createShaderProgram(vertex_shader_2D, fragment_shader);  // Používá se nový vertex shader a fragment shader pro 2D
+	this->shaders.push_back(s_tree_2D);
+
+
+	/*ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
 	s_tree.createShaderProgram(vertex_shader, fragment_shader);
-	this->shaders.push_back(s_tree);
+	this->shaders.push_back(s_tree);*/
 
-	size_t size_tree = sizeof(tree);
-	Models tree_model;
-	tree_model.createBuffer(tree, size_tree, true);
-	this->models.push_back(tree_model);
+	size_t size_tree_2D = sizeof(tree);
+	Models tree_model_2D;
+	tree_model_2D.createBuffer(tree, size_tree_2D, false);
+	this->models.push_back(tree_model_2D);
 
-	DrawableObject tree_object(tree_model, s_tree);
+	DrawableObject tree_object_2D(tree_model_2D, s_tree_2D);
 
 	Transformation trans;
 	trans.scale(glm::vec3(0.1f));
 
-	tree_object.setTransformation(trans);
-	scenes[0].addObject(tree_object);
+	tree_object_2D.setTransformation(trans);
+	scenes[0].addObject(tree_object_2D);
 
 	// Bushes
-	ShaderProgram s_bush(GL_TRIANGLES, 0, 8730);
-	s_bush.createShaderProgram(vertex_shader, fragment_shader2);
+	ShaderProgram s_bush_2D(GL_TRIANGLES, 0, 8730);
+	s_bush_2D.createShaderProgram(vertex_shader_2D, fragment_shader2);
 	
 	size_t size_bush = sizeof(bushes);
 	Models bush_model;
-	bush_model.createBuffer(bushes, size_bush, true);
+	bush_model.createBuffer(bushes, size_bush, false);
 	this->models.push_back(bush_model);
 
-	DrawableObject bush_object(bush_model, s_bush);
+	DrawableObject bush_object(bush_model, s_bush_2D);
 
 	Transformation trans2;
 	trans2.scale(glm::vec3(0.5));
@@ -200,39 +244,57 @@ void Application::initialization()
 	//Scene 2 
 	// 
 
+	ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
+	s_tree.createShaderProgram(vertex_shader, fragment_shader);
+	this->shaders.push_back(s_tree);
+
+	size_t size_tree_3D = sizeof(tree);
+	Models tree_model_3D;
+	tree_model_3D.createBuffer(tree, size_tree_3D, true);
+	this->models.push_back(tree_model_3D);
+
+
 	// Bushes
 	ShaderProgram s_bush_scene2(GL_TRIANGLES, 0, 8730);
 	s_bush_scene2.createShaderProgram(vertex_shader, fragment_shader);
+	this->shaders.push_back(s_bush_scene2);
+
+	size_t size_bush_3D = sizeof(bushes);
+	Models bush_model_3D;
+	bush_model_3D.createBuffer(bushes, size_bush_3D, true);
+	this->models.push_back(bush_model_3D);
 
 
 
 	for (int i = 0; i < 10; ++i) {
+
+
 		// Random tree transformations
 		float scale_size_tree = 0.05f + (rand() % 6) / 100.0f;
 		float posX_tree = -12.5f + rand() % 21; 
 		float posY_tree = 0.5f + (rand() % 5) / 10.0f;
-		glm::vec3 randomPos_tree(posX_tree, posY_tree, 0.0f);
+		glm::vec3 randomPos_tree(posX_tree, posY_tree, 0.5f + (rand() % 5) / 10.0f);
 		float random_rotation_tree = (rand() % 31) - 15;
 
 		// Random tree
-		DrawableObject tree_object(tree_model, s_tree);
+		DrawableObject tree_object_3D(tree_model_3D, s_tree);
 		Transformation tree_trans;
 
 		tree_trans.scale(glm::vec3(scale_size_tree));
 		tree_trans.translate(glm::vec3(randomPos_tree));
 		tree_trans.rotate(random_rotation_tree, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		tree_object.setTransformation(tree_trans);
-		scenes[1].addObject(tree_object);
+		tree_object_3D.setTransformation(tree_trans);
+		scenes[1].addObject(tree_object_3D);
 
 		// Random bush transformations
 		float scale_size_bush = 0.05f + (rand() % 6) / 100.0f;
 		float posX_bush = -12.5f + rand() % 21;
 		float posY_bush = -0.5f - (rand() % 3) / 10.0f;
-		glm::vec3 randomPos_bush(posX_bush, posY_bush, 0.0f);
+		glm::vec3 randomPos_bush(posX_bush, posY_bush, 0.5f + (rand() % 5) / 10.0f);
 
 		// Random bush
-		DrawableObject bush_object(bush_model, s_bush_scene2);
+		DrawableObject bush_object(bush_model_3D, s_bush_scene2);
 		Transformation bush_trans;
 
 		bush_trans.scale(glm::vec3(scale_size_bush));

@@ -1,15 +1,8 @@
 #include "Scene.h"
 
-Scene::Scene()
+Scene::Scene(Camera2* camera) 
 {
-    
-}
-
-Transformation Scene::getActiveTransformation() {
-    if (!objects.empty()) {
-        return objects[0].getTransformation();  // Získání transformace prvního objektu ve scénì
-    }
-    return Transformation();  // Vrátí výchozí (identity) transformaci, pokud není žádný objekt
+    this->camera = camera;
 }
 
 void Scene::addObject(const DrawableObject& object) {
@@ -41,6 +34,11 @@ void Scene::render() {
 std::vector<DrawableObject>& Scene::getObjects()
 {
     return this->objects;
+}
+
+Camera2* Scene::getCamera()
+{
+    return this->camera;
 }
 
 
