@@ -27,6 +27,7 @@
 #include "Camera.h"
 
 #include <random>
+#include <time.h>
 using namespace std;
 class Application
 {

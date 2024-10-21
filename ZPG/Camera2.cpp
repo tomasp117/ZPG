@@ -1,7 +1,7 @@
 #include "Camera2.h"
 
 Camera2::Camera2(glm::vec3 position, glm::vec3 up, float fov, float ratio)
-    : position(position), up(up), yaw(yaw), pitch(pitch), fov(fov), ratio(ratio), speed(2.5f)
+    : position(position), up(up), yaw(-90.0f), pitch(0.0f), fov(fov), ratio(ratio), speed(2.5f)
 {
     target = glm::vec3(0.0f);
     UpdateViewMatrix();
@@ -63,7 +63,7 @@ void Camera2::moveRight(float velocity)
 {
     glm::vec3 right = glm::normalize(glm::cross(target, up));
 
-    position -= right * velocity;
+    position += right * velocity;
 
     UpdateViewMatrix();
 
@@ -74,7 +74,7 @@ void Camera2::moveLeft(float velocity)
 {
     glm::vec3 right = glm::normalize(glm::cross(target, up));
 
-    position += right * velocity;
+    position -= right * velocity;
 
     UpdateViewMatrix();
 
