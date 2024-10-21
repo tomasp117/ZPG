@@ -29,25 +29,17 @@ void Camera2::UpdateProjectionMatrix()
     projectionMatrix = glm::perspective(glm::radians(fov), this->ratio, 0.0f, 100.0f);
 }
 
-void Camera2::AddShader(ShaderProgram* observer)
+void Camera2::addShader(ShaderProgram* shader)
 {
-    shaders.push_back(observer);
+    this->observers.push_back(shader);
 }
 
-void Camera2::notifyShaders()
-{
-    for (auto& observer : shaders) {
-        observer->useProgram();
-        observer->SetViewMatrix(viewMatrix);
-        observer->SetProjectionMatrix(projectionMatrix);
-    }
-}
 
 void Camera2::moveForward(float velocity)
 {
     position += target * velocity;
     UpdateViewMatrix();
-    notifyShaders();
+    notifyObservers();
 }
 
 void Camera2::moveBackward(float velocity)
@@ -56,7 +48,7 @@ void Camera2::moveBackward(float velocity)
 
     UpdateViewMatrix();
 
-    notifyShaders();
+    notifyObservers();
 }
 
 void Camera2::moveRight(float velocity)
@@ -66,8 +58,8 @@ void Camera2::moveRight(float velocity)
     position -= right * velocity;
 
     UpdateViewMatrix();
-
-    notifyShaders();
+    notifyObservers();
+    
 }
 
 void Camera2::moveLeft(float velocity)
@@ -78,7 +70,7 @@ void Camera2::moveLeft(float velocity)
 
     UpdateViewMatrix();
 
-    notifyShaders();
+    notifyObservers();
 }
 
 void Camera2::rotate(float deltaX, float deltaY)
@@ -100,6 +92,6 @@ void Camera2::rotate(float deltaX, float deltaY)
 
     UpdateViewMatrix();
 
-    notifyShaders();
+    notifyObservers();
 }
 

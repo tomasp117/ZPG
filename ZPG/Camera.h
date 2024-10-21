@@ -45,6 +45,6 @@ public:
     void moveLeft(float velocity);
 
     void rotate(float deltaX, float deltaY);
-    void update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
+    //void update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) override;
 };
 

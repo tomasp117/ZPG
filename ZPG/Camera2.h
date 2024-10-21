@@ -9,9 +9,11 @@
 #include <stdio.h>
 #include <vector>
 
+#include "Subject.h"
+
 class ShaderProgram;
 
-class Camera2
+class Camera2 : Subject
 {
 private:
     // Camera attributes
@@ -32,7 +34,9 @@ private:
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;
 
-    std::vector<ShaderProgram*> shaders;
+    std::vector<ShaderProgram*> observers;
+
+    //std::vector<ShaderProgram*> shaders;
 
 public:
     Camera2(glm::vec3 position, glm::vec3 up, float fov, float ratio);
@@ -42,9 +46,7 @@ public:
     void UpdateViewMatrix();
     void UpdateProjectionMatrix();
 
-    void AddShader(ShaderProgram* observer);
-    void notifyShaders();
-
+    void addShader(ShaderProgram* shader);
     // Pohyb kamery
     void moveForward(float velocity);
     void moveBackward(float velocity);

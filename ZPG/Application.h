@@ -24,7 +24,7 @@
 #include "Scene.h"
 #include "DrawableObject.h"
 #include "Transformation.h"
-#include "Camera.h"
+#include "Camera2.h"
 
 #include <random>
 using namespace std;
