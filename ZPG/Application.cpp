@@ -58,9 +58,7 @@ void Application::key_callback(GLFWwindow* window, int key, int scancode, int ac
 
 		// Ovládání pohybu kamery pomocí kláves
 		if (key == GLFW_KEY_W) {
-			printf("fasgbjfhafkjasfjkhafukhjaf");
 			scene.getCamera()->moveForward(cameraSpeed);
-			
 		}
 		if (key == GLFW_KEY_S) {
 			scene.getCamera()->moveBackward(cameraSpeed);
@@ -85,7 +83,29 @@ void Application::window_size_callback(GLFWwindow* window, int width, int height
 	glViewport(0, 0, width, height);
 }
 
-void Application::cursor_callback(GLFWwindow* window, double x, double y) { printf("cursor_callback \n"); }
+void Application::cursor_callback(GLFWwindow* window, double x, double y) { 
+
+	printf("cursor_callback \n");
+	if (firstMouse) {
+		lastX = (float)x;
+		lastY = (float)y;
+		firstMouse = false;
+	}
+
+	float deltaX = (float)x - lastX;
+	float deltaY = lastY - (float)y;  // Obrácenì, protože y-pozice v obrazovkách fungují opaènì
+
+	lastX = (float)x;
+	lastY = (float)y;
+
+	// Ovládání kamery (zde mùžeme upravit citlivost myši)
+	float sensitivity = 0.1f;
+	deltaX *= sensitivity;
+	deltaY *= sensitivity;
+
+	// Rotace kamery
+	camera->rotate(deltaX, deltaY);
+}
 
 void Application::button_callback(GLFWwindow* window, int button, int action, int mode) {
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
@@ -143,7 +163,7 @@ void Application::initialization()
 	glfwSetWindowSizeCallback(this->window, window_size_callback);
 
 	Camera2* camera = new Camera2(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
-	Camera2* camera2 = new Camera2(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
+	Camera2* camera2 = new Camera2(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
 
 	this->active_scene = 0;
 	scenes.push_back(Scene(camera));
@@ -202,8 +222,8 @@ void Application::initialization()
 	// 
 	// Trees
 
-	ShaderProgram s_tree_2D(GL_TRIANGLES, 0, 92814);  // Pøedpokládám, že GL_TRIANGLES a další parametry jsou správnì
-	s_tree_2D.createShaderProgram(vertex_shader_2D, fragment_shader);  // Používá se nový vertex shader a fragment shader pro 2D
+	ShaderProgram s_tree_2D(GL_TRIANGLES, 0, 92814, camera);  // Pøedpokládám, že GL_TRIANGLES a další parametry jsou správnì
+	s_tree_2D.createShaderProgram(vertex_shader_2D, fragment_shader2);  // Používá se nový vertex shader a fragment shader pro 2D
 	this->shaders.push_back(s_tree_2D);
 
 
@@ -225,8 +245,9 @@ void Application::initialization()
 	scenes[0].addObject(tree_object_2D);
 
 	// Bushes
-	ShaderProgram s_bush_2D(GL_TRIANGLES, 0, 8730);
+	ShaderProgram s_bush_2D(GL_TRIANGLES, 0, 8730, camera);
 	s_bush_2D.createShaderProgram(vertex_shader_2D, fragment_shader2);
+	this->shaders.push_back(s_bush_2D);
 	
 	size_t size_bush = sizeof(bushes);
 	Models bush_model;
@@ -244,7 +265,7 @@ void Application::initialization()
 	//Scene 2 
 	// 
 
-	ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
+	ShaderProgram s_tree(GL_TRIANGLES, 0, 92814, camera2);
 	s_tree.createShaderProgram(vertex_shader, fragment_shader);
 	this->shaders.push_back(s_tree);
 
@@ -255,7 +276,7 @@ void Application::initialization()
 
 
 	// Bushes
-	ShaderProgram s_bush_scene2(GL_TRIANGLES, 0, 8730);
+	ShaderProgram s_bush_scene2(GL_TRIANGLES, 0, 8730, camera2);
 	s_bush_scene2.createShaderProgram(vertex_shader, fragment_shader);
 	this->shaders.push_back(s_bush_scene2);
 

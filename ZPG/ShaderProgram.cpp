@@ -1,12 +1,15 @@
 #include "ShaderProgram.h"
 #include <stdlib.h>
 
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera2* camera)
 {
 	shaderProgram = 0;
 	this->mode = mode;
 	this->first = first;
 	this->count = count;
+
+	this->camera = camera;
+	camera->addShader(this);
 }
 
 void ShaderProgram::createShaderProgram(const char* vertex_shader, const char* fragment_shader)
@@ -128,10 +131,10 @@ void ShaderProgram::SetMatrix(glm::mat4 Matrix)
 	this->M = Matrix;
 }
 
-void ShaderProgram::SetViewMatrix(glm::mat4& viewMatrix)
+void ShaderProgram::SetViewMatrix(const glm::mat4& viewMatrix)
 {
 	//glm::mat4 viewMatrix = this->camera->getViewMatrix();
-
+	this->viewMatrix = viewMatrix;
 	GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
 	if (viewLoc == -1) {
 		printf("Error: Cannot find uniform 'viewMatrix' in shader!\n");
@@ -139,16 +142,24 @@ void ShaderProgram::SetViewMatrix(glm::mat4& viewMatrix)
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &viewMatrix[0][0]);
 }
 
-void ShaderProgram::SetProjectionMatrix(glm::mat4& projectionMatrix)
+void ShaderProgram::SetProjectionMatrix(const glm::mat4& projectionMatrix)
 {
 	//glm::mat4 projectionMatrix = this->camera->getProjectionMatrix();
-
+	this->projectionMatrix = projectionMatrix;
 	GLint projectionLoc = glGetUniformLocation(this->shaderProgram, "projectionMatrix");
 	if (projectionLoc == -1) {
 		printf("Error: Cannot find uniform 'projectionMatrix' in shader!\n");
 	}
 
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projectionMatrix[0][0]);
+}
+
+void ShaderProgram::update()
+{
+	useProgram();  // Activate the shader program
+	SetViewMatrix(camera->getViewMatrix());
+	SetProjectionMatrix(camera->getProjectionMatrix());
+
 }
 
 

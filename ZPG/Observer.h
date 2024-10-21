@@ -6,5 +6,5 @@
 class Observer
 {
 public:
-    virtual void update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) = 0;
+    virtual void update() = 0;
 };

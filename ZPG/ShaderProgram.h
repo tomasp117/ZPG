@@ -13,9 +13,11 @@
 #include "Observer.h"
 #include "Camera2.h"
 
+#include "Observer.h"
+
 class Camera2;
 
-class ShaderProgram
+class ShaderProgram : Observer
 {
 private:
 	GLenum mode;
@@ -28,9 +30,11 @@ private:
 	glm::mat4 projectionMatrix;
 	glm::mat4 M;
 
+	Camera2* camera;
+
 
 public:
-	ShaderProgram(GLenum mode, GLint first, GLsizei count);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera2* camera);
 	void createShaderProgram(const char* vertex_shader, const char* fragment_shader);
 	void checkLinking(GLuint shader);
 	void drawShaderArrays();
@@ -50,7 +54,9 @@ public:
  //   void setUniform(const std::string& name, const glm::vec3& vec) const;
 
 	void SetMatrix(glm::mat4 Matrix);
-	void SetViewMatrix(glm::mat4& viewMatrix);
-	void SetProjectionMatrix(glm::mat4& projectionMatrix);
+	void SetViewMatrix(const glm::mat4& viewMatrix);
+	void SetProjectionMatrix(const glm::mat4& projectionMatrix);
+
+	void update() override;
 };
 

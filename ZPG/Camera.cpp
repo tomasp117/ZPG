@@ -56,7 +56,7 @@ void Camera::notifyObservers()
 {
     for (Observer* observer : observers)
     {
-        observer->update(viewMatrix, projectionMatrix);
+        //observer->update(viewMatrix, projectionMatrix);
     }
 }
 
@@ -103,9 +103,9 @@ void Camera::rotate(float deltaX, float deltaY)
     updateCameraVectors();
     notifyObservers();
 }
-
-void Camera::update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
-{
-    // V tomto pøípadì možná nemusíš dìlat nic v samotné metodì update()
-    // Kamera nebude mìnit svou interní logiku, ale po každé zmìnì pøepoèítá matice
-}
+//
+//void Camera::update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+//{
+//    // V tomto pøípadì možná nemusíš dìlat nic v samotné metodì update()
+//    // Kamera nebude mìnit svou interní logiku, ale po každé zmìnì pøepoèítá matice
+//}
