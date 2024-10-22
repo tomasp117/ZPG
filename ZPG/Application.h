@@ -25,6 +25,7 @@
 #include "DrawableObject.h"
 #include "Transformation.h"
 #include "Camera2.h"
+#include "plain.h"
 
 #include <random>
 #include <time.h>
@@ -44,6 +45,8 @@ private:
 	vector<Scene> scenes;
 
 	int active_scene;
+	float lastX, lastY;
+	bool firstMouse;
 
 public:
 

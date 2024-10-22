@@ -3,10 +3,10 @@
 Camera2::Camera2(glm::vec3 position, glm::vec3 up, float fov, float ratio)
     : position(position), up(up), yaw(-90.0f), pitch(0.0f), fov(fov), ratio(ratio), speed(2.5f)
 {
-    target = glm::vec3(0.0f);
+    target = glm::vec3(0.0f, 0.0f, 0.0f);
     UpdateViewMatrix();
     UpdateProjectionMatrix();
-
+    notifyObservers();
 }
 
 glm::mat4 Camera2::getViewMatrix() const
