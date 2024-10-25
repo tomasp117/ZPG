@@ -9,7 +9,7 @@ private:
 
 public:
     // Getter for the transformation matrix
-    glm::mat4 getMatrix() const;
+    glm::mat4& getMatrix();
 
     // Transformation functions
     Transformation();

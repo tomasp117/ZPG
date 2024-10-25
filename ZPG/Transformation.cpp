@@ -5,7 +5,7 @@ Transformation::Transformation() {
     modelMatrix = glm::mat4(1.0f);
 }
 
-glm::mat4 Transformation::getMatrix() const {
+glm::mat4& Transformation::getMatrix() {
     return modelMatrix;
 }
 

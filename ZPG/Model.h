@@ -1,13 +1,14 @@
 #pragma once
 #include <GL/glew.h>
 #include <stdio.h>
-class Models
+class Model
 {
 private:
-	GLuint VAO = 0;
-	GLuint VBO = 0;
+	GLuint VAO;
+	GLuint VBO;
 public:
-	Models();
+	Model();
+	~Model();
 	void createBuffer(const float* points, size_t size, bool hasNormal);
 	void bindVAO();
 };

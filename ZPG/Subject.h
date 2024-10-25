@@ -7,9 +7,9 @@ class Observer;
 class Subject {
 public:
 
-    void addObserver(Observer* observer);
+    virtual void addObserver(Observer* observer);
 
-    void notifyObservers();
+    virtual void notifyObservers();
 
 private:
     std::vector<Observer*> observers;

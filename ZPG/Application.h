@@ -17,15 +17,14 @@
 #include <vector>
 
 #include "ShaderProgram.h"
-#include "Models.h"
+#include "Model.h"
 #include "sphere.h"
 #include "tree.h"
 #include "bushes.h"
+#include "plain.h"
 #include "Scene.h"
 #include "DrawableObject.h"
 #include "Transformation.h"
-#include "Camera2.h"
-#include "plain.h"
 
 #include <random>
 #include <time.h>
@@ -37,12 +36,7 @@ private:
 	GLFWwindow* window;
 	//GLuint VAO;
 
-	//vector<GLuint> shaders;
-	vector<ShaderProgram> shaders;
-	vector<Models> models;
-	vector<glm::mat4> treeTransforms;
-
-	vector<Scene> scenes;
+	vector<Scene*> scenes;
 
 	int active_scene;
 	float lastX, lastY;

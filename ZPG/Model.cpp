@@ -1,10 +1,24 @@
-#include "Models.h"
+#include "Model.h"
 
-Models::Models()
+Model::Model() : VAO(0), VBO(0)
 {
 }
 
-void Models::createBuffer(const float* points, size_t size, bool hasNormal)
+Model::~Model()
+{
+	if (VBO != 0)
+	{
+		glDeleteBuffers(1, &VBO);
+		VBO = 0; 
+	}
+	if (VAO != 0)
+	{
+		glDeleteVertexArrays(1, &VAO);
+		VAO = 0;
+	}
+}
+
+void Model::createBuffer(const float* points, size_t size, bool hasNormal)
 {
 	//Vertex Array Object (VAO)
 	glGenVertexArrays(1, &this->VAO); //generate the VAO
@@ -29,7 +43,7 @@ void Models::createBuffer(const float* points, size_t size, bool hasNormal)
 	
 }
 
-void Models::bindVAO()
+void Model::bindVAO()
 {
 	glBindVertexArray(this->VAO);
 }
