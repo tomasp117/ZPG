@@ -8,6 +8,12 @@ DrawableObject::DrawableObject(const float* points, size_t size, bool hasNormal,
     this->model->createBuffer(points, size, hasNormal);
 }
 
+DrawableObject::DrawableObject(Model* model, ShaderProgram *shader)
+{
+    this->shaderProgram = shader;
+    this->model = model;
+}
+
 void DrawableObject::setShader(ShaderProgram* shader) {
     this->shaderProgram = shader;
 }

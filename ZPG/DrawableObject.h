@@ -13,7 +13,7 @@ public:
     // Konstruktor s parametry (napøíklad pøiøazení modelu a shaderu)
     //DrawableObject(Model* model, ShaderProgram* shader);
     DrawableObject(const float* points, size_t size, bool hasNormal, GLenum mode, GLint first, GLsizei count, const char* vertex_shader, const char* fragment_shader, Camera* camera);
-
+    DrawableObject(Model* model, ShaderProgram* shader);
     //DrawableObject(Model model, ShaderProgram shader);
     void render(); // Pro vykreslení objektu
 

@@ -100,7 +100,15 @@ void Application::cursor_callback(GLFWwindow* window, double x, double y) {
 	Scene* scene = app->scenes[app->active_scene];
 	vector<DrawableObject*> objects = scene->getObjects();
 	static double lastX = 400, lastY = 300;
+	static bool firstMouse = true;
 
+	if (firstMouse)
+	{
+		lastX = x;
+		lastY = y;
+
+		firstMouse = false;
+	}
 	double offsetX = x - lastX;
 	double offsetY = lastY - y;
 
@@ -231,51 +239,22 @@ void Application::initialization()
 
 
 	srand(time(NULL));
-	//Scene 1 
-	// 
-	// Trees
-	//ShaderProgram s_tree(GL_TRIANGLES, 0, 92814);
-	//s_tree.createShaderProgram(vertex_shader, fragment_shader);
-	//this->shaders.push_back(s_tree);
+	// Created global shaders and models
+	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, camera2);
+	shader->createShaderProgram(vertex_shader, fragment_shader);
+	Model* model = new Model();
+	model->createBuffer(tree, sizeof(tree), true);
 
-	//size_t size_tree = sizeof(tree);
-	//Model tree_model;
-	//tree_model.createBuffer(tree, size_tree, true);
-	//this->models.push_back(tree_model);
+	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, camera2);
+	shader_b->createShaderProgram(vertex_shader, fragment_shader);
+	Model* model_b = new Model();
+	model_b->createBuffer(bushes, sizeof(bushes), true);
 
-	//DrawableObject tree_object(tree_model, s_tree);
 
-	//Transformation trans;
-	//trans.scale(glm::vec3(0.1f));
-
-	//tree_object.setTransformation(trans);
-	//scenes[0].addObject(tree_object);
-
-	//// Bushes
-	//ShaderProgram s_bush(GL_TRIANGLES, 0, 8730);
-	//s_bush.createShaderProgram(vertex_shader, fragment_shader2);
-	//
-	//size_t size_bush = sizeof(bushes);
-	//Model bush_model;
-	//bush_model.createBuffer(bushes, size_bush, true);
-	//this->models.push_back(bush_model);
-
-	//DrawableObject bush_object(bush_model, s_bush);
-
-	//Transformation trans2;
-	//trans2.scale(glm::vec3(0.5));
-	//trans2.translate(glm::vec3(0.5f, 0.2f, 0.0f));
-	//bush_object.setTransformation(trans2);
-	//scenes[0].addObject(bush_object);
-	//Scene 2 
-	// 
-
-	// Bushes
-	/*ShaderProgram s_bush_scene2(GL_TRIANGLES, 0, 8730);
-	s_bush_scene2.createShaderProgram(vertex_shader, fragment_shader);*/
-
+	// Scene 1
 	size_t size_plain = sizeof(plain);
 	DrawableObject* plain_object = new DrawableObject(plain, size_plain, true, GL_TRIANGLES, 0, 6, vertex_shader, fragment_shader, camera);
+	
 	Transformation* trans_plain = new Transformation();
 	trans_plain->scale(glm::vec3(10.0f));
 	plain_object->setTransformation(trans_plain);
@@ -296,8 +275,10 @@ void Application::initialization()
 	trans_bush->translate(glm::vec3(0.5f, 0.2f, 0.0f));
 	bush_object->setTransformation(trans_bush);
 	scenes[0]->addObject(bush_object);
+	scenes[0]->getCamera()->rotate(-90.0f, 0.0f); // Update camera after creating objects
 
 
+	// Scene 2
 	DrawableObject* plain_object2 = new DrawableObject(plain, size_plain, true, GL_TRIANGLES, 0, 6, vertex_shader, fragment_shader, camera2);
 	Transformation* trans_plain2 = new Transformation();
 	trans_plain2->scale(glm::vec3(10.0f));
@@ -305,14 +286,15 @@ void Application::initialization()
 	scenes[1]->addObject(plain_object2);
 	for (int i = 0; i < 80; ++i) {
 		// Random tree transformations
-		float scale_size_tree = getRandomFloat(0.1f, 1.0f);
+		float scale_size_tree = getRandomFloat(0.1f, 0.5f);
 		float posX_tree = getRandomFloat(-10.0f / scale_size_tree, 10.0f / scale_size_tree);
 		float posZ_tree = getRandomFloat(-10.0f / scale_size_tree, 10.0f / scale_size_tree);
 		glm::vec3 randomPos_tree(posX_tree, 0.0f, posZ_tree);
 		float random_rotation_tree = (rand() % 360);
 
 		// Random tree
-		DrawableObject* tree_object = new DrawableObject(tree, size_tree, true, GL_TRIANGLES, 0, 92814, vertex_shader, fragment_shader, camera2);
+		//DrawableObject* tree_object = new DrawableObject(tree, size_tree, true, GL_TRIANGLES, 0, 92814, vertex_shader, fragment_shader, camera2);
+		DrawableObject* tree_object = new DrawableObject(model, shader);
 		Transformation* tree_trans = new Transformation();
 
 		tree_trans->scale(glm::vec3(scale_size_tree));
@@ -325,7 +307,7 @@ void Application::initialization()
 		tree_object->setTransformation(tree_trans);
 		scenes[1]->addObject(tree_object);
 
-		for (int j = 0; j < 4; ++j) {
+		for (int j = 0; j < 60; ++j) {
 			// Random bush transformations
 			float scale_size_bush = getRandomFloat(0.5f, 1.0f);
 			float posX_bush = getRandomFloat(-10.0f / scale_size_bush, 10.0f / scale_size_bush);
@@ -333,7 +315,8 @@ void Application::initialization()
 			glm::vec3 randomPos_bush(posX_bush, 0.0f, posZ_bush);
 
 			// Random bush
-			DrawableObject* bush_object = new DrawableObject(bushes, size_bush, true, GL_TRIANGLES, 0, 8730, vertex_shader, fragment_shader, camera2);;
+			//DrawableObject* bush_object = new DrawableObject(bushes, size_bush, true, GL_TRIANGLES, 0, 8730, vertex_shader, fragment_shader, camera2);;
+			DrawableObject* bush_object = new DrawableObject(model_b, shader_b);
 			Transformation* bush_trans = new Transformation();
 
 			bush_trans->scale(glm::vec3(scale_size_bush));
@@ -343,9 +326,11 @@ void Application::initialization()
 
 			bush_object->setTransformation(bush_trans);
 			scenes[1]->addObject(bush_object);
+			
 		}
 		
 	}
+	scenes[1]->getCamera()->rotate(-90.0f, 0.0f);// Update camera after creating objects  
 
 	
 

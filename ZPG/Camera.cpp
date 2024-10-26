@@ -1,9 +1,9 @@
 #include "Camera.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float fov, float ratio)
-    : position(position), up(up), yaw(-90.0f), pitch(0.0f), fov(fov), ratio(ratio), speed(5.0f)
+    : position(position), up(up), yaw(0.0f), pitch(0.0f), fov(fov), ratio(ratio), speed(5.0f)
 {
-    target = glm::vec3(0.0f, 0.0f, 0.0f);
+    target = glm::vec3(0.1f, 0.1f, 0.1f);
     UpdateViewMatrix();
     UpdateProjectionMatrix();
 
