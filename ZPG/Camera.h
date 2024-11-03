@@ -43,8 +43,7 @@ public:
     void UpdateViewMatrix();
     void UpdateProjectionMatrix();
 
-
-
+    glm::vec3 getPosition();
     //void addShader(ShaderProgram* shader);
 
     // Pohyb kamery

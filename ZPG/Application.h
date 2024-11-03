@@ -25,6 +25,10 @@
 #include "Scene.h"
 #include "DrawableObject.h"
 #include "Transformation.h"
+#include "TransformationComponent.h"
+#include "Scale.h"
+#include "Rotate.h"
+#include "Translate.h"
 
 #include <random>
 #include <time.h>

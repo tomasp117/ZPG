@@ -5,11 +5,18 @@ Transformation::Transformation() {
     modelMatrix = glm::mat4(1.0f);
 }
 
+void Transformation::AddComponent(TransformationComponent* tranformation)
+{
+    this->transformations.push_back(tranformation);
+
+    this->modelMatrix = tranformation->Apply(this->modelMatrix);
+}
+
 glm::mat4& Transformation::getMatrix() {
     return modelMatrix;
 }
 
-void Transformation::translate(const glm::vec3& translation) {
+/*void Transformation::translate(const glm::vec3& translation) {
     // Apply translation to the model matrix
     modelMatrix = glm::translate(modelMatrix, translation);
 }
@@ -22,5 +29,5 @@ void Transformation::rotate(float angle, const glm::vec3& axis) {
 void Transformation::scale(const glm::vec3& scale) {
     // Apply scaling to the model matrix
     modelMatrix = glm::scale(modelMatrix, scale);
-}
+}*/
 

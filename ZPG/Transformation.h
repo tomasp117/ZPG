@@ -1,11 +1,16 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "TransformationComponent.h"
+#include <vector>
+
+using namespace std;
 
 class Transformation
 {
 private:
     glm::mat4 modelMatrix;
+    vector<TransformationComponent*> transformations;
 
 public:
     // Getter for the transformation matrix
@@ -13,9 +18,10 @@ public:
 
     // Transformation functions
     Transformation();
-    void translate(const glm::vec3& translation);
+    void AddComponent(TransformationComponent* tranformation);
+    /*void translate(const glm::vec3& translation);
     void rotate(float angle, const glm::vec3& axis);
-    void scale(const glm::vec3& scale);
+    void scale(const glm::vec3& scale);*/
 
 
 };

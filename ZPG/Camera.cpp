@@ -28,6 +28,10 @@ void Camera::UpdateProjectionMatrix()
 {
     projectionMatrix = glm::perspective(glm::radians(fov), this->ratio, 0.1f, 100.0f);
 }
+glm::vec3 Camera::getPosition()
+{
+    return this->position;
+}
 /*
 void Camera::addShader(ShaderProgram* shader)
 {

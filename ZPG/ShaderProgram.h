@@ -13,6 +13,8 @@
 
 #include "Observer.h"
 #include "Camera.h"
+#include "ShaderLoader.h"
+#include "Light.h"
 
 class Camera;
 
@@ -23,11 +25,12 @@ private:
 	GLint first;
 	GLsizei count;
 	GLuint shaderProgram;
-
+	ShaderLoader* shaderLoader;
 	Camera* camera;
+	Light* light;
 
 public:
-	ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, Light* light);
 	~ShaderProgram();
 	void createShaderProgram(const char* vertex_shader, const char* fragment_shader);
 	void checkLinking(GLuint shader);
@@ -39,6 +42,12 @@ public:
 	void SetMatrix(glm::mat4 Matrix);
 	void SetViewMatrix();
 	void SetProjectionMatrix();
+	void SetMatrixNormal(glm::mat3 normalMatrix);
+	void SetCameraViewPos();
+
+	void SetLightUniforms();
+
+	void SetObjectUniforms();
 
 	void update() override;
 };

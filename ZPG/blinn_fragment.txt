@@ -1,0 +1,26 @@
+#version 330
+in vec3 fragNormal;       // Normála fragmentu
+in vec3 fragPos;          // Pozice fragmentu
+out vec4 frag_colour;     // Výstupní barva
+uniform vec3 lightPosition; // Pozice světla
+uniform vec3 lightColor;    // Barva světla
+uniform vec3 viewPosition;   // Pozice kamery
+uniform vec3 objectColor;    // Barva objektu
+uniform float ambientStrength; // Ambientní síla
+
+void main () {
+    vec3 ambient = ambientStrength * lightColor;
+
+    vec3 lightVector = normalize(lightPosition - fragPos);
+    float diff = max(dot(normalize(fragNormal), lightVector), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    vec3 viewDir = normalize(viewPosition - fragPos);
+    vec3 halfVector = normalize(lightVector + viewDir);
+    
+    float spec = pow(max(dot(normalize(fragNormal), halfVector), 0.0), 32.0);
+    vec3 specular = spec * lightColor;
+
+    vec3 result = (ambient + diffuse + specular) * objectColor;
+    frag_colour  = vec4(result, 1.0);
+}

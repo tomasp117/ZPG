@@ -1,15 +1,18 @@
 #include "ShaderProgram.h"
 #include <stdlib.h>
 
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, Light* light)
 {
-	shaderProgram = 0;
+	this->shaderProgram = 0;
 	this->mode = mode;
 	this->first = first;
 	this->count = count;
 
 	this->camera = camera;
-	camera->addObserver(this);
+	this->camera->addObserver(this);
+
+	this->light = light;
+	this->light->addObserver(this);
 }
 
 ShaderProgram::~ShaderProgram()
@@ -22,42 +25,45 @@ ShaderProgram::~ShaderProgram()
 
 void ShaderProgram::createShaderProgram(const char* vertex_shader, const char* fragment_shader)
 {
-	//create and compile shaders
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertex_shader, NULL);
-	glCompileShader(vertexShader);
-	checkCompilation(vertexShader);
+	////create and compile shaders
+	//GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	//glShaderSource(vertexShader, 1, &vertex_shader, NULL);
+	//glCompileShader(vertexShader);
+	//checkCompilation(vertexShader);
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
-	glCompileShader(fragmentShader);
-	checkCompilation(fragmentShader);
+	//GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
+	//glCompileShader(fragmentShader);
+	//checkCompilation(fragmentShader);
 
-	this->shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, fragmentShader);
-	glAttachShader(shaderProgram, vertexShader);
-	glLinkProgram(shaderProgram);
-	checkLinking(this->shaderProgram);
+	//this->shaderProgram = glCreateProgram();
+	//glAttachShader(shaderProgram, fragmentShader);
+	//glAttachShader(shaderProgram, vertexShader);
+	//glLinkProgram(shaderProgram);
+	//checkLinking(this->shaderProgram);
 
-	// Validace shadera
-	glValidateProgram(this->shaderProgram);
+	//// Validace shadera
+	//glValidateProgram(this->shaderProgram);
 
-	GLint validateStatus;
-	glGetProgramiv(this->shaderProgram, GL_VALIDATE_STATUS, &validateStatus);
-	if (validateStatus == GL_FALSE) {
-		GLint infoLogLength;
-		glGetProgramiv(this->shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-		glGetProgramInfoLog(this->shaderProgram, infoLogLength, NULL, strInfoLog);
-		fprintf(stderr, "Shader validation failure: %s\n", strInfoLog);
-		delete[] strInfoLog;
-	}
+	//GLint validateStatus;
+	//glGetProgramiv(this->shaderProgram, GL_VALIDATE_STATUS, &validateStatus);
+	//if (validateStatus == GL_FALSE) {
+	//	GLint infoLogLength;
+	//	glGetProgramiv(this->shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
+	//	GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+	//	glGetProgramInfoLog(this->shaderProgram, infoLogLength, NULL, strInfoLog);
+	//	fprintf(stderr, "Shader validation failure: %s\n", strInfoLog);
+	//	delete[] strInfoLog;
+	//}
 
 
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	
+	//glDeleteShader(vertexShader);
+	//glDeleteShader(fragmentShader);
+
+	//this->shaderProgram = this->shaderLoader->loadShader(vertex_shader, fragment_shader);
+	this->shaderLoader = new ShaderLoader(vertex_shader, fragment_shader, &this->shaderProgram);
+
 }
 
 void ShaderProgram::checkLinking(GLuint shader)
@@ -140,10 +146,50 @@ void ShaderProgram::SetProjectionMatrix()
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &camera->getProjectionMatrix()[0][0]);
 }
 
+void ShaderProgram::SetMatrixNormal(glm::mat3 normalMatrix)
+{
+	GLuint uniform = glGetUniformLocation(this->shaderProgram, "normalMatrix");
+	if (uniform == -1) {
+		printf("Error: Cannot find uniform 'normalMatrix' in shader!\n");
+	}
+	glUniformMatrix3fv(uniform, 1, GL_FALSE, &normalMatrix[0][0]);
+}
+
+void ShaderProgram::SetCameraViewPos()
+{
+	GLint cameraViewLoc = glGetUniformLocation(this->shaderProgram, "viewPosition");
+
+	if (cameraViewLoc == -1) {
+		return;
+	}
+
+	glUniform3fv(cameraViewLoc, 1, glm::value_ptr(camera->getPosition()));
+}
+
+void ShaderProgram::SetLightUniforms() {
+	GLint lightPosLoc = glGetUniformLocation(this->shaderProgram, "lightPosition");
+	GLint lightColorLoc = glGetUniformLocation(this->shaderProgram, "lightColor");
+
+	if (lightPosLoc != -1) glUniform3fv(lightPosLoc, 1, glm::value_ptr(light->GetLightPosition()));
+	if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(light->GetLightColor()));
+
+}
+
+void ShaderProgram::SetObjectUniforms() {
+	GLint objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
+	if (objectColorLoc != -1) glUniform3fv(objectColorLoc, 1, glm::value_ptr(light->GetObjectColor()));
+}
+
 void ShaderProgram::update()
 {
 	useProgram();
+	
+	//camera
 	SetViewMatrix();
 	SetProjectionMatrix();
+	SetCameraViewPos();
 
+	//light
+	SetLightUniforms();
+	SetObjectUniforms();
 }

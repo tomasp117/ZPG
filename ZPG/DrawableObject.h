@@ -2,6 +2,8 @@
 #include "Model.h"
 #include "Transformation.h"
 #include "ShaderProgram.h"
+#include "Camera.h"
+#include "Light.h"
 class DrawableObject
 {
 private:
@@ -12,7 +14,7 @@ private:
 public:
     // Konstruktor s parametry (napøíklad pøiøazení modelu a shaderu)
     //DrawableObject(Model* model, ShaderProgram* shader);
-    DrawableObject(const float* points, size_t size, bool hasNormal, GLenum mode, GLint first, GLsizei count, const char* vertex_shader, const char* fragment_shader, Camera* camera);
+    DrawableObject(const float* points, size_t size, bool hasNormal, GLenum mode, GLint first, GLsizei count, const char* vertex_shader, const char* fragment_shader, Camera* camera, Light* light);
     DrawableObject(Model* model, ShaderProgram* shader);
     //DrawableObject(Model model, ShaderProgram shader);
     void render(); // Pro vykreslení objektu
@@ -21,5 +23,6 @@ public:
     void setModel( Model* newModel);      // Set the model (geometry)
     void setTransformation( Transformation* newTransformation); // Set the transformations
     Transformation* getTransformation();
+    void AddComponent(TransformationComponent* transformationComponent);
 };
 

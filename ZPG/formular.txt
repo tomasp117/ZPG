@@ -1,0 +1,35 @@
+Přepínání scén za běhu Ano
+Přenutí scény proběhne pro stisku mezerníku na klávesnici. Je řešeno pomocí uložení aktualní scény a následném posunu ve vektoru dokud nenarazí na konec. při stisku se zavolá funkce switchScene v applikaci.
+
+a) Základní scéna (Ano/Ne) Ano
+
+b) Scéna s lesem (Ano/Ne) Ano
+
+c) Scéna se čtyřmi kuličkami (Ano/Ne) Ano
+
+d) Scéna pro demonstraci použití všech shaderů (Konstantní, Lambert, Phong a Blinn) (Ano/Ne) Ano
+
+Světlo (Ano/Ne) (kde a jak máte naimplementováno, jak se updatuje změna světla) Ano
+
+světlo je naiplemetováno ve třídě Light jako Subject pomocí návrhového vzoru Observer. Světlo se zatím updatuje při jakékoliv změně kdy se updatuje kamera a nebo světlo v ShaderProgramu. 
+
+Základní třídy (ShaderProgram, DrowableObject, Camera, Controller) (Ano/Ne) (kdo zodpovídá za vykreslování, kde jsou uloženy modely, shadery atd.) Ano až na Controller
+
+Za vykreslování zoddpovídá scéna (konkrétně funkce render). Modely, shadery a transformace jsou uloženy ve třídě DrawableObject.
+
+Transformace (Composite pattern) (Ano/Ne) (Máte pro transformace základní třídy? Co a jak jste použili?) Ano
+
+Každý objekt má své transformace a ty jsou pak rozděleny do tříd Rotate, Translate a Scale, které dědí ze třídy TransformationComponent kde je jedna virtuální metoda pro aplikaci dané funkce transformace
+Základy OOP
+
+a) Encapsulation (zapouzdření) (Ano/Ne) (Kde a jak?) Ano
+
+Atributy tříd mám private a všechny potřebné atributy mají v případě vnějšího použítí gettery.
+b) Inheritance (dědičnost) (Ano/Ne) (Kde a jak?) Ano
+
+U návrhového vzoru observer a dále u Composite dědím vlastnosti (funkce) třeba pro aktualizace pozic kamery atd..
+c) Polymorphism (polymorfismus neboli mnohotvárnost) (Ano/Ne) (Kde a jak?) Ano
+Polymorfismus využívám v Composite, kde mám pole TransformationComponent, kde můžou být ruzné transformace.
+
+Vertex a fragment shadery prosím uložte do textových souboru a použijte přiložený ShaderLoader pro jejich načítání (Ano/Ne) (Kde a jak jste použili?) Ano
+Při inicializaci shaderu a nebo při vytváření Drawable object předám jako parametr konstruktoru název shaderu
