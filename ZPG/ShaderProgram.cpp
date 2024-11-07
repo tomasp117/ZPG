@@ -129,7 +129,8 @@ void ShaderProgram::SetViewMatrix()
 	glm::mat4 viewMatrix = this->camera->getViewMatrix();
 	GLint viewLoc = glGetUniformLocation(this->shaderProgram, "viewMatrix");
 	if (viewLoc == -1) {
-		printf("Error: Cannot find uniform 'viewMatrix' in shader!\n");
+		//printf("Error: Cannot find uniform 'viewMatrix' in shader!\n");
+		return;
 	}
 	else {
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &viewMatrix[0][0]);
@@ -140,7 +141,8 @@ void ShaderProgram::SetProjectionMatrix()
 	//glm::mat4 projectionMatrix = this->camera->getProjectionMatrix();
 	GLint projectionLoc = glGetUniformLocation(this->shaderProgram, "projectionMatrix");
 	if (projectionLoc == -1) {
-		printf("Error: Cannot find uniform 'projectionMatrix' in shader!\n");
+		//printf("Error: Cannot find uniform 'projectionMatrix' in shader!\n");
+		return;
 	}
 
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &camera->getProjectionMatrix()[0][0]);
@@ -150,7 +152,8 @@ void ShaderProgram::SetMatrixNormal(glm::mat3 normalMatrix)
 {
 	GLuint uniform = glGetUniformLocation(this->shaderProgram, "normalMatrix");
 	if (uniform == -1) {
-		printf("Error: Cannot find uniform 'normalMatrix' in shader!\n");
+		//printf("Error: Cannot find uniform 'normalMatrix' in shader!\n");
+		return;
 	}
 	glUniformMatrix3fv(uniform, 1, GL_FALSE, &normalMatrix[0][0]);
 }
@@ -177,7 +180,9 @@ void ShaderProgram::SetLightUniforms() {
 
 void ShaderProgram::SetObjectUniforms() {
 	GLint objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
-	if (objectColorLoc != -1) glUniform3fv(objectColorLoc, 1, glm::value_ptr(light->GetObjectColor()));
+	if (objectColorLoc != -1) {
+		glUniform3fv(objectColorLoc, 1, glm::value_ptr(light->GetObjectColor()));
+	}
 }
 
 void ShaderProgram::update()

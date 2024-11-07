@@ -22,10 +22,15 @@ using namespace std;
 class SceneManager
 {
 private:
+	float ratio;
+	int active_scene;
 	vector<Scene*> scenes;
 public:
-	SceneManager();
-	void initScenes();
+	SceneManager(float ratio);
+	void initScene1();
+	void initScene2();
+	void initScene3();
+	void initScene4();
 	Scene* getActiveScene();
 	void switchScene(); 
 };

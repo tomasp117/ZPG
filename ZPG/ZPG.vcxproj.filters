@@ -135,4 +135,21 @@
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="blinn_fragment.txt">
+      <Filter>Zdrojové soubory</Filter>
+    </Text>
+    <Text Include="fragment_shader.txt">
+      <Filter>Zdrojové soubory</Filter>
+    </Text>
+    <Text Include="lambert_fragment.txt">
+      <Filter>Zdrojové soubory</Filter>
+    </Text>
+    <Text Include="phong_fragment.txt">
+      <Filter>Zdrojové soubory</Filter>
+    </Text>
+    <Text Include="vertex_shader.txt">
+      <Filter>Zdrojové soubory</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

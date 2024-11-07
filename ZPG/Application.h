@@ -29,6 +29,7 @@
 #include "Scale.h"
 #include "Rotate.h"
 #include "Translate.h"
+#include "SceneManager.h"
 
 #include <random>
 #include <time.h>
@@ -40,9 +41,11 @@ private:
 	GLFWwindow* window;
 	//GLuint VAO;
 
-	vector<Scene*> scenes;
+	SceneManager* sceneManager;
 
-	int active_scene;
+	//vector<Scene*> scenes;
+
+	//int active_scene;
 	float lastX, lastY;
 	bool firstMouse;
 

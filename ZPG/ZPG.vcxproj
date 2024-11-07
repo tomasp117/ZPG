@@ -172,6 +172,13 @@
     <ClInclude Include="Translate.h" />
     <ClInclude Include="tree.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="blinn_fragment.txt" />
+    <Text Include="fragment_shader.txt" />
+    <Text Include="lambert_fragment.txt" />
+    <Text Include="phong_fragment.txt" />
+    <Text Include="vertex_shader.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
