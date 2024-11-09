@@ -10,11 +10,14 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include "Observer.h"
 #include "Camera.h"
 #include "ShaderLoader.h"
 #include "Light.h"
+
+using namespace std;
 
 class Camera;
 
@@ -27,10 +30,10 @@ private:
 	GLuint shaderProgram;
 	ShaderLoader* shaderLoader;
 	Camera* camera;
-	Light* light;
+	vector<Light*> lights;
 
 public:
-	ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, Light* light);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, vector<Light*> lights);
 	~ShaderProgram();
 	void createShaderProgram(const char* vertex_shader, const char* fragment_shader);
 	void checkLinking(GLuint shader);
@@ -47,7 +50,7 @@ public:
 
 	void SetLightUniforms();
 
-	void SetObjectUniforms();
+	void SetObjectUniforms(glm::vec3& color);
 
 	void update() override;
 };

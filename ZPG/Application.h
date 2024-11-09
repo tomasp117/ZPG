@@ -33,13 +33,14 @@
 
 #include <random>
 #include <time.h>
+
 using namespace std;
+
 class Application
 {
 
 private:
 	GLFWwindow* window;
-	//GLuint VAO;
 
 	SceneManager* sceneManager;
 
@@ -52,9 +53,6 @@ private:
 public:
 
 	void initialization();
-	void switchScene();
-	/*void createShaders();
-	void createModels();   */ 
 	void run();
 
 	static void error_callback(int error, const char* description);

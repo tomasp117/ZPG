@@ -26,8 +26,7 @@ void Application::key_callback(GLFWwindow* window, int key, int scancode, int ac
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
 		printf("Switching scene\n");
-		
-		app->switchScene();
+		app->sceneManager->switchScene();
 	}
 
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
@@ -164,219 +163,7 @@ void Application::initialization()
 	this->sceneManager->initScene3();
 	this->sceneManager->initScene4();
 
-	Camera* camera = new Camera(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, ratio);
-	Camera* camera2 = new Camera(glm::vec3(0.0f, 0.1f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, ratio);
-	Camera* camera3 = new Camera(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, ratio);
-	Camera* camera4 = new Camera(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, ratio);
-
-	Light* light1 = new Light(
-		glm::vec3(0.0f, 0.0f, 0.0f),   
-		glm::vec4(0.1, 0.1, 0.1, 1.0), 
-		glm::vec3(0.385f, 0.647f, 0.812f)                      
-	);
-
-	Light* light2 = new Light(
-		glm::vec3(0.0f, 5.0f, 0.0f),  
-		glm::vec4(0.1, 0.1, 0.1, 1.0),
-		glm::vec3(0.385f, 0.647f, 0.812f)                  
-	);
-
-	Light* light3 = new Light(
-		glm::vec3(0.0f, 0.0f, 0.0f),  
-		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f),
-		glm::vec3(0.385f, 0.647f, 0.812f)                       
-	);
-
-	Light* light4 = new Light(
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f),
-		glm::vec3(0.385f, 0.647f, 0.812f)
-	);
-
-	this->active_scene = 0;
-	scenes.push_back(new Scene(camera));	
-	scenes.push_back(new Scene(camera3));
-	scenes.push_back(new Scene(camera4));
-	scenes.push_back(new Scene(camera2));
-
-	srand(time(NULL));
-	// Created global shaders and models
-	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, camera3, light2);
-	shader->createShaderProgram("vertex_shader.txt", "fragment_shader.txt");
-	Model* model = new Model();
-	model->createBuffer(tree, sizeof(tree), true);
-
-	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, camera3, light2);
-	shader_b->createShaderProgram("vertex_shader.txt", "fragment_shader.txt");
-	Model* model_b = new Model();
-	model_b->createBuffer(bushes, sizeof(bushes), true);
-
-
-	// Scene 1
-	float triangle[] = {
-		1.0f, 0.0f, 0.0f,
-		2.0f, 0.0f, 0.0f,
-		0.5f, 1.0f, 0.0f
-	};
-	size_t size_triangle = sizeof(triangle); // Opraveno na size_triangle
-	DrawableObject* triangle_object = new DrawableObject(triangle, size_triangle, false, GL_TRIANGLES, 0, "vertex_shader.txt", "fragment_shader.txt", camera, light1);
-	triangle_object->AddComponent(new Scale(glm::vec3(1.0f)));
-	//trans_triangle->scale(glm::vec3(1.0f)); // Mùžete zmìnit mìøítko podle potøeby
-
-	//triangle_object->setTransformation(trans_triangle);
-	scenes[0]->addObject(triangle_object);
-	scenes[0]->getCamera()->rotate(-90.0f, 0.0f);
-
-	// Scene 2
-	size_t size_plain2 = sizeof(plain);
-	DrawableObject* plain_object2 = new DrawableObject(plain, size_plain2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "lambert_fragment.txt", camera3, light2);
-	/*Transformation* trans_plain2 = new Transformation();
-	trans_plain2->scale(glm::vec3(10.0f));
-	plain_object2->setTransformation(trans_plain2);*/
-	plain_object2->AddComponent(new Scale(glm::vec3(10.0f)));
-	scenes[1]->addObject(plain_object2);
-	for (int i = 0; i < 80; ++i) {
-		// Random tree transformations
-		float scale_size_tree = getRandomFloat(0.1f, 0.5f);
-		float posX_tree = getRandomFloat(-10.0f / scale_size_tree, 10.0f / scale_size_tree);
-		float posZ_tree = getRandomFloat(-10.0f / scale_size_tree, 10.0f / scale_size_tree);
-		glm::vec3 randomPos_tree(posX_tree, 0.0f, posZ_tree);
-		float random_rotation_tree = (rand() % 360);
-
-		// Random tree
-		//DrawableObject* tree_object = new DrawableObject(tree, size_tree, true, GL_TRIANGLES, 0, 92814, vertex_shader, fragment_shader, camera2);
-		DrawableObject* tree_object = new DrawableObject(model, shader);
-		//Transformation* tree_trans = new Transformation();
-
-		//tree_trans->scale(glm::vec3(scale_size_tree));
-		//tree_trans->translate(randomPos_tree);
-		//
-		////tree_trans->rotate(random_rotation_tree, glm::vec3(1.0f, 0.0f, 0.0f));
-		//
-		//
-
-		//tree_object->setTransformation(tree_trans);
-
-		tree_object->AddComponent(new Scale(glm::vec3(scale_size_tree)));
-		tree_object->AddComponent(new Translate(randomPos_tree));
-		scenes[1]->addObject(tree_object);
-
-		for (int j = 0; j < 60; ++j) {
-			// Random bush transformations
-			float scale_size_bush = getRandomFloat(0.5f, 1.0f);
-			float posX_bush = getRandomFloat(-10.0f / scale_size_bush, 10.0f / scale_size_bush);
-			float posZ_bush = getRandomFloat(-10.0f / scale_size_bush, 10.0f / scale_size_bush);
-			glm::vec3 randomPos_bush(posX_bush, 0.0f, posZ_bush);
-
-			// Random bush
-			//DrawableObject* bush_object = new DrawableObject(bushes, size_bush, true, GL_TRIANGLES, 0, 8730, vertex_shader, fragment_shader, camera2);;
-			DrawableObject* bush_object = new DrawableObject(model_b, shader_b);
-			/*Transformation* bush_trans = new Transformation();
-
-			bush_trans->scale(glm::vec3(scale_size_bush));
-			bush_trans->translate(randomPos_bush);
-
-
-
-			bush_object->setTransformation(bush_trans);*/
-
-			bush_object->AddComponent(new Scale(glm::vec3(scale_size_bush)));
-			bush_object->AddComponent(new Translate(randomPos_bush));
-			scenes[1]->addObject(bush_object);
-			
-		}
-		
-	}
-	scenes[1]->getCamera()->rotate(-90.0f, 0.0f);// Update camera after creating objects  
-
-	//Scene 3
-	size_t size_sphere = sizeof(sphere);
-	
-	DrawableObject* sphere_object = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera4, light3);
-	/*Transformation* trans_sphere = new Transformation();
-	trans_sphere->scale(glm::vec3(1.0f));
-	trans_sphere->translate(glm::vec3(-4.0f, 0.0f, 0.0));
-	sphere_object->setTransformation(trans_sphere);*/
-	sphere_object->AddComponent(new Scale(glm::vec3(1.0f)));
-	sphere_object->AddComponent(new Translate(glm::vec3(-4.0f, 0.0f, 0.0f)));
-	scenes[2]->addObject(sphere_object);
-
-	DrawableObject* sphere_object2 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0,  "vertex_shader.txt", "phong_fragment.txt", camera4, light3);
-	/*Transformation* trans_sphere2 = new Transformation();
-	trans_sphere2->scale(glm::vec3(1.0f));
-	trans_sphere2->translate(glm::vec3(4.0f, 0.0f, 0.0));
-	sphere_object2->setTransformation(trans_sphere2);*/
-	sphere_object2->AddComponent(new Scale(glm::vec3(1.0f)));
-	sphere_object2->AddComponent(new Translate(glm::vec3(4.0f, 0.0f, 0.0f)));
-	scenes[2]->addObject(sphere_object2);
-
-	DrawableObject* sphere_object3 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0,  "vertex_shader.txt", "blinn_fragment.txt", camera4, light3);
-	//Transformation* trans_sphere3 = new Transformation();
-	//trans_sphere3->scale(glm::vec3(1.0f));
-	//trans_sphere3->translate(glm::vec3(0.0f, 0.0f, 4.0));
-	//sphere_object3->setTransformation(trans_sphere3);
-	sphere_object3->AddComponent(new Scale(glm::vec3(1.0f)));
-	sphere_object3->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, 4.0f)));
-	scenes[2]->addObject(sphere_object3);
-
-	DrawableObject* sphere_object4 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera4, light3);
-	//Transformation* trans_sphere4 = new Transformation();
-	//trans_sphere4->scale(glm::vec3(1.0f));
-	//trans_sphere4->translate(glm::vec3(0.0f, 0.0f, -4.0));
-	//sphere_object4->setTransformation(trans_sphere4);
-	sphere_object4->AddComponent(new Scale(glm::vec3(1.0f)));
-	sphere_object4->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, -4.0f)));
-	scenes[2]->addObject(sphere_object4);
-
-	scenes[2]->getCamera()->rotate(-90.0f, 0.0f);// Update camera after creating objects 
-	
-	//Scene 4
-	size_t size_sphere2 = sizeof(sphere);
-	size_t size_tree2 = sizeof(tree);
-
-	DrawableObject* sphere_object5 = new DrawableObject(sphere, size_sphere2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "fragment_shader.txt", camera2, light4);
-	/*Transformation* trans_sphere = new Transformation();
-	trans_sphere->scale(glm::vec3(1.0f));
-	trans_sphere->translate(glm::vec3(-4.0f, 0.0f, 0.0));
-	sphere_object->setTransformation(trans_sphere);*/
-	sphere_object5->AddComponent(new Scale(glm::vec3(1.0f)));
-	sphere_object5->AddComponent(new Translate(glm::vec3(-4.0f, 0.0f, 0.0f)));
-	scenes[3]->addObject(sphere_object5);
-
-	DrawableObject* sphere_object6 = new DrawableObject(sphere, size_sphere2, true, GL_TRIANGLES, 0,  "vertex_shader.txt", "blinn_fragment.txt", camera2, light4);
-	/*Transformation* trans_sphere2 = new Transformation();
-	trans_sphere2->scale(glm::vec3(1.0f));
-	trans_sphere2->translate(glm::vec3(4.0f, 0.0f, 0.0));
-	sphere_object2->setTransformation(trans_sphere2);*/
-	sphere_object6->AddComponent(new Scale(glm::vec3(1.0f)));
-	sphere_object6->AddComponent(new Translate(glm::vec3(4.0f, 0.0f, 0.0f)));
-	scenes[3]->addObject(sphere_object6);
-
-	DrawableObject* tree_object1 = new DrawableObject(tree, size_tree2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera2, light4);
-	//Transformation* trans_sphere3 = new Transformation();
-	//trans_sphere3->scale(glm::vec3(1.0f));
-	//trans_sphere3->translate(glm::vec3(0.0f, 0.0f, 4.0));
-	//sphere_object3->setTransformation(trans_sphere3);
-	tree_object1->AddComponent(new Scale(glm::vec3(1.0f)));
-	tree_object1->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, 4.0f)));
-	scenes[3]->addObject(tree_object1);
-
-	DrawableObject* tree_object2 = new DrawableObject(tree, size_tree2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "blinn_fragment.txt", camera2, light4);
-	//Transformation* trans_sphere4 = new Transformation();
-	//trans_sphere4->scale(glm::vec3(1.0f));
-	//trans_sphere4->translate(glm::vec3(0.0f, 0.0f, -4.0));
-	//sphere_object4->setTransformation(trans_sphere4);
-	tree_object2->AddComponent(new Scale(glm::vec3(1.0f)));
-	tree_object2->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, -4.0f)));
-	scenes[3]->addObject(tree_object2);
-
-	scenes[3]->getCamera()->rotate(-90.0f, 0.0f);// Update camera after creating objects 
 }
-
-void Application::switchScene() {
-	this->active_scene = (this->active_scene + 1) % scenes.size();
-}
-
 
 void Application::run()
 {
@@ -385,7 +172,7 @@ void Application::run()
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		scenes[this->active_scene]->render();
+		sceneManager->getActiveScene()->render();
 		//glDrawArrays(GL_TRIANGLES, 0, 6); // two triangles
 		// update other events like input handling
 		glfwPollEvents();

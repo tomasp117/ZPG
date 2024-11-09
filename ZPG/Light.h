@@ -24,21 +24,26 @@ class Light : Subject
 {
 	 glm::vec3 lightPosition;
 	 glm::vec3 lightColor;
-	 glm::vec3 objectColor;
+     float ambientStrength;
+	 //glm::vec3 objectColor;
 
      vector<Observer*> observers;
 public:
-    Light(glm::vec3 lightPosition, glm::vec3 lightColor, glm::vec3 objectColor);
+    Light(glm::vec3 lightPosition, glm::vec3 lightColor/*, glm::vec3 objectColor*/, float ambientStrength);
 
     glm::vec3 GetLightPosition();
 
     glm::vec3 GetLightColor();
 
-    glm::vec3 GetObjectColor();
+    float GetAmbientStrength();
+
+    //glm::vec3 GetObjectColor();
 
     void SetLightPosition(glm::vec3 newPosition);
 
     void SetLightColor(glm::vec3 newColor);
+
+    void SetLightColor(float newAmbientStrength);
 
     void addObserver(Observer* observer) override;
 

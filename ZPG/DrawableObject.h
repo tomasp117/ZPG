@@ -10,11 +10,12 @@ private:
     ShaderProgram* shaderProgram;   // Shader program used to draw the object
     Model* model;                  // Model containing the VAO and VBO
     Transformation* transformation; // Transformation (position, rotation, scaling)
+    glm::vec3 objectColor;
 
 public:
     // Konstruktor s parametry (napøíklad pøiøazení modelu a shaderu)
     //DrawableObject(Model* model, ShaderProgram* shader);
-    DrawableObject(const float* points, size_t size, bool hasNormal, GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, Light* light);
+    DrawableObject(const float* points, size_t size, bool hasNormal, GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);
     DrawableObject(Model* model, ShaderProgram* shader);
     //DrawableObject(Model model, ShaderProgram shader);
     void render(); // Pro vykreslení objektu
@@ -24,5 +25,7 @@ public:
     void setTransformation( Transformation* newTransformation); // Set the transformations
     Transformation* getTransformation();
     void AddComponent(TransformationComponent* transformationComponent);
+
+    void SetColor(glm::vec3 color);
 };
 

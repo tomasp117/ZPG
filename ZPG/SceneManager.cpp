@@ -22,47 +22,107 @@ float getRandFloat(float min, float max) {
 	return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
 }
 
-void SceneManager::initScene1()
-{
+void SceneManager::initScene1() {
 	Camera* camera1 = new Camera(glm::vec3(0.0f, 0.5f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, this->ratio);
+	//Light* light1 = new Light(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f ));
 
-	Light* light1 = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec4(0.1, 0.1, 0.1, 1.0), glm::vec3(0.385f, 0.647f, 0.812f));
+	vector<Light*> lights1;
+	lights1.push_back(new Light(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+	lights1.push_back(new Light(glm::vec3(0.0f, -20.0f, 0.0f), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), 0.1f));
+
+
 
 	scenes.push_back(new Scene(camera1));
 
-	// Scene 1
-	float triangle[] = {
-		1.0f, 0.0f, 0.0f,
-		2.0f, 0.0f, 0.0f,
-		0.5f, 1.0f, 0.0f
-	};
-
+	float triangle[] = { 1.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.5f, 1.0f, 0.0f };
 	size_t size_triangle = sizeof(triangle);
-	DrawableObject* triangle_object = new DrawableObject(triangle, size_triangle, false, GL_TRIANGLES, 0, "vertex_shader.txt", "fragment_shader.txt", camera1, light1);
-	triangle_object->AddComponent(new Scale(glm::vec3(1.0f)));
-
+	DrawableObject* triangle_object = new DrawableObject(triangle, size_triangle, false, GL_TRIANGLES, 0, "vertex_shader.txt", "fragment_shader.txt", camera1, lights1);
+	triangle_object->AddComponent(new Scale(glm::vec3(2.0f)));
+	triangle_object->AddComponent(new Rotate(45.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
+	triangle_object->AddComponent(new Scale(glm::vec3(0.5f)));
+	triangle_object->SetColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Green
 	scenes[0]->addObject(triangle_object);
 	scenes[0]->getCamera()->rotate(-90.0f, 0.0f);
 
+	// Created global shaders and models
+	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, camera1, lights1);
+	shader->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
+	Model* model = new Model();
+	model->createBuffer(tree, sizeof(tree), true);
+
+	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, camera1, lights1);
+	shader_b->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
+	Model* model_b = new Model();
+	model_b->createBuffer(bushes, sizeof(bushes), true);
+	DrawableObject* tree_object = new DrawableObject(model, shader);
+
+
+	tree_object->AddComponent(new Scale(glm::vec3(1.0f)));
+	tree_object->AddComponent(new Translate(glm::vec3(3.0f, 0.0f, 0.0f)));
+	tree_object->AddComponent(new Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
+	tree_object->SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
+	scenes[0]->addObject(tree_object);
+
+	size_t size_sphere = sizeof(sphere);
+	DrawableObject* sphere_object3 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera1, lights1);
+	sphere_object3->AddComponent(new Scale(glm::vec3(1.0f)));
+	sphere_object3->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, 4.0f)));
+	sphere_object3->AddComponent(new Rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
+	sphere_object3->SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
+	scenes[0]->addObject(sphere_object3);
+
+	float x_axis[] = {
+	-5.0f, 0.0f, 0.0f, // Zaèátek (vlevo)
+	5.0f, 0.0f, 0.0f   // Konec (vpravo)
+	};
+	DrawableObject* x_axis_object = new DrawableObject(x_axis, sizeof(x_axis), false, GL_LINES, 0, "vertex_shader.txt", "fragment_shader.txt", camera1, lights1);
+	x_axis_object->SetColor(glm::vec3(0.0f, 0.0f, 1.0f)); // Modrá
+	x_axis_object->AddComponent(new Translate(glm::vec3(2.0f, 0.0f, 0.0f)));
+	scenes[0]->addObject(x_axis_object);
+
+	// Osa Y (žlutá)
+	float y_axis[] = {
+		0.0f, -5.0f, 0.0f, // Zaèátek (dolù)
+		0.0f, 5.0f, 0.0f   // Konec (nahoru)
+	};
+	DrawableObject* y_axis_object = new DrawableObject(y_axis, sizeof(y_axis), false, GL_LINES, 0, "vertex_shader.txt", "fragment_shader.txt", camera1, lights1);
+	y_axis_object->SetColor(glm::vec3(1.0f, 1.0f, 0.0f)); // Žlutá
+	y_axis_object->AddComponent(new Translate(glm::vec3(0.0f, 2.0f, 0.0f)));
+	scenes[0]->addObject(y_axis_object);
+
+	// Osa Z (zelená)
+	float z_axis[] = {
+		0.0f, 0.0f, -5.0f, // Zaèátek (pøed kamerou)
+		0.0f, 0.0f, 5.0f   // Konec (za kamerou)
+	};
+	DrawableObject* z_axis_object = new DrawableObject(z_axis, sizeof(z_axis), false, GL_LINES, 0, "vertex_shader.txt", "fragment_shader.txt", camera1, lights1);
+	z_axis_object->SetColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Zelená
+	z_axis_object->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, 2.0f)));
+	scenes[0]->addObject(z_axis_object);
 }
 
 void SceneManager::initScene2()
 {
 	Camera* camera2 = new Camera(glm::vec3(0.0f, 0.1f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, this->ratio);
 
-	Light* light2 = new Light(
+	/*Light* light2 = new Light(
 		glm::vec3(0.0f, 5.0f, 0.0f),
-		glm::vec4(0.1, 0.1, 0.1, 1.0),
-		glm::vec3(0.385f, 0.647f, 0.812f)
-	);
+		glm::vec4(0.1, 0.1, 0.1, 1.0)
+		
+	);*/
+
+	vector<Light*> lights2;
+	lights2.push_back(new Light(glm::vec3(7.0f, 5.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+	lights2.push_back(new Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+	scenes.push_back(new Scene(camera2));
 
 	// Created global shaders and models
-	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, camera2, light2);
+	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, camera2, lights2);
 	shader->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
 	Model* model = new Model();
 	model->createBuffer(tree, sizeof(tree), true);
 
-	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, camera2, light2);
+	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, camera2, lights2);
 	shader_b->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
 	Model* model_b = new Model();
 	model_b->createBuffer(bushes, sizeof(bushes), true);
@@ -70,7 +130,7 @@ void SceneManager::initScene2()
 	
 
 	size_t size_plain2 = sizeof(plain);
-	DrawableObject* plain_object2 = new DrawableObject(plain, size_plain2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "lambert_fragment.txt", camera2, light2);
+	DrawableObject* plain_object2 = new DrawableObject(plain, size_plain2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "lambert_fragment.txt", camera2, lights2);
 	/*Transformation* trans_plain2 = new Transformation();
 	trans_plain2->scale(glm::vec3(10.0f));
 	plain_object2->setTransformation(trans_plain2);*/
@@ -120,29 +180,37 @@ void SceneManager::initScene3()
 {
 	Camera* camera3 = new Camera(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, ratio);
 
-	Light* light3 = new Light(
+	/*Light* light3 = new Light(
 		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f),
-		glm::vec3(0.385f, 0.647f, 0.812f)
-	);
+		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		
+	);*/
+
+	vector<Light*> lights3;
+	lights3.push_back(new Light(glm::vec3(0.0f, 0.0f, 0.0f),glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+	lights3.push_back(new Light(glm::vec3(10.0f, 0.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+
+ 
+	scenes.push_back(new Scene(camera3));
+
 	size_t size_sphere = sizeof(sphere);
 
-	DrawableObject* sphere_object = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, light3);
+	DrawableObject* sphere_object = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, lights3);
 	sphere_object->AddComponent(new Scale(glm::vec3(1.0f)));
 	sphere_object->AddComponent(new Translate(glm::vec3(-4.0f, 0.0f, 0.0f)));
 	scenes[2]->addObject(sphere_object);
 
-	DrawableObject* sphere_object2 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, light3);
+	DrawableObject* sphere_object2 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, lights3);
 	sphere_object2->AddComponent(new Scale(glm::vec3(1.0f)));
 	sphere_object2->AddComponent(new Translate(glm::vec3(4.0f, 0.0f, 0.0f)));
 	scenes[2]->addObject(sphere_object2);
 
-	DrawableObject* sphere_object3 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, light3);
+	DrawableObject* sphere_object3 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, lights3);
 	sphere_object3->AddComponent(new Scale(glm::vec3(1.0f)));
 	sphere_object3->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, 4.0f)));
 	scenes[2]->addObject(sphere_object3);
 
-	DrawableObject* sphere_object4 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, light3);
+	DrawableObject* sphere_object4 = new DrawableObject(sphere, size_sphere, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera3, lights3);
 	sphere_object4->AddComponent(new Scale(glm::vec3(1.0f)));
 	sphere_object4->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, -4.0f)));
 	scenes[2]->addObject(sphere_object4);
@@ -154,31 +222,36 @@ void SceneManager::initScene4()
 {
 	Camera* camera4 = new Camera(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, ratio);
 
-	Light* light4 = new Light(
+	/*Light* light4 = new Light(
 		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f),
-		glm::vec3(0.385f, 0.647f, 0.812f)
-	);
+		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		
+	);*/
+	vector<Light*> lights4;
+	lights4.push_back(new Light(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+	lights4.push_back(new Light(glm::vec3(0.0f, -20.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+
+	scenes.push_back(new Scene(camera4));
 
 	size_t size_sphere2 = sizeof(sphere);
 	size_t size_tree2 = sizeof(tree);
 
-	DrawableObject* sphere_object5 = new DrawableObject(sphere, size_sphere2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "fragment_shader.txt", camera4, light4);
+	DrawableObject* sphere_object5 = new DrawableObject(sphere, size_sphere2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "fragment_shader.txt", camera4, lights4);
 	sphere_object5->AddComponent(new Scale(glm::vec3(1.0f)));
 	sphere_object5->AddComponent(new Translate(glm::vec3(-4.0f, 0.0f, 0.0f)));
 	scenes[3]->addObject(sphere_object5);
 
-	DrawableObject* sphere_object6 = new DrawableObject(sphere, size_sphere2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "lambert_fragment.txt", camera4, light4);
+	DrawableObject* sphere_object6 = new DrawableObject(sphere, size_sphere2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "lambert_fragment.txt", camera4, lights4);
 	sphere_object6->AddComponent(new Scale(glm::vec3(1.0f)));
 	sphere_object6->AddComponent(new Translate(glm::vec3(4.0f, 0.0f, 0.0f)));
 	scenes[3]->addObject(sphere_object6);
 
-	DrawableObject* tree_object1 = new DrawableObject(tree, size_tree2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera4, light4);
+	DrawableObject* tree_object1 = new DrawableObject(tree, size_tree2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "phong_fragment.txt", camera4, lights4);
 	tree_object1->AddComponent(new Scale(glm::vec3(1.0f)));
 	tree_object1->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, 4.0f)));
 	scenes[3]->addObject(tree_object1);
 
-	DrawableObject* tree_object2 = new DrawableObject(tree, size_tree2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "blinn_fragment.txt", camera4, light4);
+	DrawableObject* tree_object2 = new DrawableObject(tree, size_tree2, true, GL_TRIANGLES, 0, "vertex_shader.txt", "blinn_fragment.txt", camera4, lights4);
 	tree_object2->AddComponent(new Scale(glm::vec3(1.0f)));
 	tree_object2->AddComponent(new Translate(glm::vec3(0.0f, 0.0f, -4.0f)));
 	scenes[3]->addObject(tree_object2);

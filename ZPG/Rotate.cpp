@@ -3,7 +3,7 @@
 Rotate::Rotate(float angle, glm::vec3 axis)
 {
     this->angle = angle;
-    this->axis = glm::normalize(axis);
+    this->axis = axis;
 }
 
 glm::mat4 Rotate::Apply(glm::mat4 matrix)

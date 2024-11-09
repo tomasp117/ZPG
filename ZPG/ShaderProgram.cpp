@@ -1,7 +1,7 @@
 #include "ShaderProgram.h"
 #include <stdlib.h>
 
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, Light* light)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, vector<Light*> lights)
 {
 	this->shaderProgram = 0;
 	this->mode = mode;
@@ -11,8 +11,11 @@ ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* ca
 	this->camera = camera;
 	this->camera->addObserver(this);
 
-	this->light = light;
-	this->light->addObserver(this);
+	this->lights = lights;
+	for (Light* light : lights) {
+		light->addObserver(this);
+	}
+	
 }
 
 ShaderProgram::~ShaderProgram()
@@ -170,18 +173,35 @@ void ShaderProgram::SetCameraViewPos()
 }
 
 void ShaderProgram::SetLightUniforms() {
-	GLint lightPosLoc = glGetUniformLocation(this->shaderProgram, "lightPosition");
+	GLint numLightsLoc = glGetUniformLocation(this->shaderProgram, "numLights");
+
+	if (numLightsLoc != -1) glUniform1i(numLightsLoc, lights.size());
+
+	for (int i = 0; i < lights.size(); i++) {
+
+		GLint lightPosLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightPosition").c_str());
+		GLint lightColorLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightColor").c_str());
+		GLint ambientStrengthLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].ambientStrength").c_str());
+
+		if (lightPosLoc != -1) glUniform3fv(lightPosLoc, 1, glm::value_ptr(lights[i]->GetLightPosition()));
+		if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(lights[i]->GetLightColor()));
+		if (ambientStrengthLoc != -1) glUniform1f(ambientStrengthLoc, lights[i]->GetAmbientStrength());
+
+	}
+
+
+	/*GLint lightPosLoc = glGetUniformLocation(this->shaderProgram, "lightPosition");
 	GLint lightColorLoc = glGetUniformLocation(this->shaderProgram, "lightColor");
 
 	if (lightPosLoc != -1) glUniform3fv(lightPosLoc, 1, glm::value_ptr(light->GetLightPosition()));
-	if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(light->GetLightColor()));
+	if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(light->GetLightColor()));*/
 
 }
 
-void ShaderProgram::SetObjectUniforms() {
+void ShaderProgram::SetObjectUniforms(glm::vec3& color) {
 	GLint objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
 	if (objectColorLoc != -1) {
-		glUniform3fv(objectColorLoc, 1, glm::value_ptr(light->GetObjectColor()));
+		glUniform3fv(objectColorLoc, 1, glm::value_ptr(color));
 	}
 }
 
@@ -196,5 +216,5 @@ void ShaderProgram::update()
 
 	//light
 	SetLightUniforms();
-	SetObjectUniforms();
+	//SetObjectUniforms();
 }
