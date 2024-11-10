@@ -18,7 +18,7 @@ uniform vec3 objectColor;
 
 uniform float constant = 1.0;
 uniform float linear = 0.09;
-uniform float quadratic = 0.032;
+uniform float quadratic = 0.05;
 
 void main() {
     vec4 result = vec4(0.0);

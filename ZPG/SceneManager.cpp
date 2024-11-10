@@ -103,7 +103,7 @@ void SceneManager::initScene1() {
 
 void SceneManager::initScene2()
 {
-	Camera* camera2 = new Camera(glm::vec3(0.0f, 0.1f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, this->ratio);
+	Camera* camera2 = new Camera(glm::vec3(0.0f, 10.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, this->ratio);
 
 	/*Light* light2 = new Light(
 		glm::vec3(0.0f, 5.0f, 0.0f),
@@ -112,8 +112,11 @@ void SceneManager::initScene2()
 	);*/
 
 	vector<Light*> lights2;
-	lights2.push_back(new Light(glm::vec3(7.0f, 5.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
-	lights2.push_back(new Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f));
+	lights2.push_back(new Light(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 1.0f));
+	lights2.push_back(new Light(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.01f));
+	lights2.push_back(new Light(glm::vec3(-7.0f, 1.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.0001f));
+	lights2.push_back(new Light(glm::vec3(7.0f, 1.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.0001f));
+	//lights2.push_back(new Light(glm::vec3(0.0f, 1.0f, 7.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.0001f));
 	scenes.push_back(new Scene(camera2));
 
 	// Created global shaders and models
