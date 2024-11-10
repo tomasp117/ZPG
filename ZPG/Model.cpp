@@ -1,20 +1,22 @@
 #include "Model.h"
 
-Model::Model() : VAO(0), VBO(0)
+Model::Model()
 {
+	this->VAO = 0;
+	this->VBO = 0;
 }
 
 Model::~Model()
 {
-	if (VBO != 0)
+	if (this->VBO != 0)
 	{
-		glDeleteBuffers(1, &VBO);
-		VBO = 0; 
+		glDeleteBuffers(1, &this->VBO);
+		this->VBO = 0;
 	}
-	if (VAO != 0)
+	if (this->VAO != 0)
 	{
-		glDeleteVertexArrays(1, &VAO);
-		VAO = 0;
+		glDeleteVertexArrays(1, &this->VAO);
+		this->VAO = 0;
 	}
 }
 
@@ -25,14 +27,16 @@ void Model::createBuffer(const float* points, size_t size, bool hasNormal)
 	glBindVertexArray(this->VAO); //bind the VAO
 
 	glGenBuffers(1, &this->VBO); // generate the VBO
-	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(points2), points2, GL_STATIC_DRAW); // rectangle
-	glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, this->VBO); //bind the VBO
+
+	glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW); // Load data into VBO
 	
-	glEnableVertexAttribArray(0); //enable vertex attributes
+	// Enable and define vertex attribute for position
+	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
 	
 	if (hasNormal) {
+		// Enable and define vertex attribute for normal
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 	}

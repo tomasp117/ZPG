@@ -1,12 +1,23 @@
 #include "Camera.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float fov, float ratio)
-    : position(position), up(up), yaw(0.0f), pitch(0.0f), fov(fov), ratio(ratio), speed(5.0f)
 {
-    target = glm::vec3(0.1f, 0.1f, 0.1f);
-    UpdateViewMatrix();
-    UpdateProjectionMatrix();
+    this->position = position;
+    this->up = up;
+    this->fov = fov;
+    this->ratio = ratio;
 
+    // Default target location and speed
+    this->speed = 7.0f;
+    this->target = glm::vec3(0.1f, 0.1f, 0.1f); 
+
+    // Default horizpntal and vertical rotation
+    this->yaw = 0.0f;
+    this->pitch = 0.0f;
+
+    // Initialize matrices based on the current settings
+    UpdateViewMatrix(); 
+    UpdateProjectionMatrix();
 }
 
 glm::mat4 Camera::getViewMatrix()
@@ -21,34 +32,28 @@ glm::mat4 Camera::getProjectionMatrix()
 
 void Camera::UpdateViewMatrix()
 {
-    viewMatrix = glm::lookAt(position, this->position + target, up);
+    this->viewMatrix = glm::lookAt(this->position, this->position + this->target, this->up);
 }
 
 void Camera::UpdateProjectionMatrix()
 {
-    projectionMatrix = glm::perspective(glm::radians(fov), this->ratio, 0.1f, 100.0f);
+    this->projectionMatrix = glm::perspective(glm::radians(this->fov), this->ratio, 0.1f, 100.0f); // near = min distance from camera to objects for rendering / far = max distance
 }
 glm::vec3 Camera::getPosition()
 {
     return this->position;
 }
-/*
-void Camera::addShader(ShaderProgram* shader)
-{
-    this->observers.push_back(shader);
-}*/
-
 
 void Camera::moveForward(float velocity)
 {
-    position += target * (velocity * speed);
+    this->position += this->target * (velocity * this->speed);
     UpdateViewMatrix();
     notifyObservers();
 }
 
 void Camera::moveBackward(float velocity)
 {
-    position -= target * (velocity * speed);
+    this->position -= this->target * (velocity * this->speed);
 
     UpdateViewMatrix();
 
@@ -57,9 +62,9 @@ void Camera::moveBackward(float velocity)
 
 void Camera::moveRight(float velocity)
 {
-    glm::vec3 right = glm::normalize(glm::cross(target, up));
+    this->right = glm::normalize(glm::cross(this->target, this->up));
 
-    position += right * (velocity * speed);
+    this->position += this->right * (velocity * this->speed);
 
     UpdateViewMatrix();
     notifyObservers();
@@ -68,41 +73,37 @@ void Camera::moveRight(float velocity)
 
 void Camera::moveLeft(float velocity)
 {
-    glm::vec3 right = glm::normalize(glm::cross(target, up));
+    this->right = glm::normalize(glm::cross(this->target, this->up));
 
-    position -= right * (velocity * speed);
+    this->position -= this->right * (velocity * this->speed);
 
     UpdateViewMatrix();
-
     notifyObservers();
 }
 
 void Camera::rotate(float deltaX, float deltaY)
 {
-    yaw += deltaX;
-    pitch += deltaY;
+    this->yaw += deltaX;
+    this->pitch += deltaY;
 
-    if (pitch > 89.0f) pitch = 89.0f;
-    if (pitch < -89.0f) pitch = -89.0f;
+    // Clamp the pitch angle to avoid gimbal lock
+    if (this->pitch > 89.0f) this->pitch = 89.0f;
+    if (this->pitch < -89.0f) this->pitch = -89.0f;
 
-
+    // Calculate the new target direction based on yaw and pitch angles
     glm::vec3 direction;
-
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
-    target = glm::normalize(direction);
+    direction.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    direction.y = sin(glm::radians(this->pitch));
+    direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
+    this->target = glm::normalize(direction);
 
     UpdateViewMatrix();
-
     notifyObservers();
 }
 
 void Camera::addObserver(Observer* observer)
 {
     observers.push_back(observer);
-    //notifyObservers();
 }
 
 void Camera::notifyObservers() {

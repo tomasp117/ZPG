@@ -20,10 +20,5 @@ public:
     Transformation();
     void AddComponent(TransformationComponent* tranformation);
     void UpdateModelMatrix();
-    /*void translate(const glm::vec3& translation);
-    void rotate(float angle, const glm::vec3& axis);
-    void scale(const glm::vec3& scale);*/
-
-
 };
 

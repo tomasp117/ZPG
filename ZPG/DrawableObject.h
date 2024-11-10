@@ -7,24 +7,30 @@
 class DrawableObject
 {
 private:
-    ShaderProgram* shaderProgram;   // Shader program used to draw the object
-    Model* model;                  // Model containing the VAO and VBO
-    Transformation* transformation; // Transformation (position, rotation, scaling)
-    glm::vec3 objectColor;
+    ShaderProgram* shaderProgram;                                           // Shader program used to draw the object
+    Model* model;                                                           // Model containing the VAO and VBO
+    Transformation* transformation;                                         // Transformation (position, rotation, scaling)
+    glm::vec3 objectColor;                                                  // Color of the object (default = green)
 
 public:
-    // Konstruktor s parametry (napøíklad pøiøazení modelu a shaderu)
-    //DrawableObject(Model* model, ShaderProgram* shader);
-    DrawableObject(const float* points, size_t size, bool hasNormal, GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);
+    // Constructors for creating drawable obejcts with new shader and model or with already declared before shader and model
+    DrawableObject(const float* points, size_t size, bool hasNormal, 
+        GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);
+    DrawableObject(const float* points, size_t size, bool hasNormal,
+        GLenum mode, GLint first, GLsizei count, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);
     DrawableObject(Model* model, ShaderProgram* shader);
-    //DrawableObject(Model model, ShaderProgram shader);
-    void render(); // Pro vykreslení objektu
 
-    void setShader( ShaderProgram* shader); // Set the shader for the object
-    void setModel( Model* newModel);      // Set the model (geometry)
-    void setTransformation( Transformation* newTransformation); // Set the transformations
+    void render();                                                  
+
+    // Getters
     Transformation* getTransformation();
-    void AddComponent(TransformationComponent* transformationComponent);
+
+    // Setters
+    void setShader( ShaderProgram* shader);  
+    void setModel( Model* newModel);
+    void setTransformation( Transformation* newTransformation);
+
+    void AddComponent(TransformationComponent* transformationComponent);    // Add a new transformation component (position, rotation, scale) to the object
 
     void SetColor(glm::vec3 color);
 };
