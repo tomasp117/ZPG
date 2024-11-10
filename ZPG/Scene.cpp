@@ -34,7 +34,8 @@ void Scene::setTransformationForAllObjects(Transformation* transformation) {
 void Scene::render() {
     // Render all objects in the scene
     for (auto& object : objects) {
-        object->render();  // Calls the object's render function
+        object->updateTransformationDynamic();
+        object->render();  // Calls the object's render function       
     }
 }
 

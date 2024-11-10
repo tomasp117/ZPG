@@ -15,6 +15,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
+
+#include <random>
+#include <time.h>
 #include "Scene.h"
 
 using namespace std;
@@ -33,5 +36,7 @@ public:
 	void initScene4();
 	Scene* getActiveScene();
 	void switchScene(); 
+
+	vector<Scene*> getScenes();
 };
 

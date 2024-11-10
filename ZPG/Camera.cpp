@@ -16,8 +16,8 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float fov, float ratio)
     this->pitch = 0.0f;
 
     // Initialize matrices based on the current settings
-    UpdateViewMatrix(); 
-    UpdateProjectionMatrix();
+    updateViewMatrix(); 
+    updateProjectionMatrix();
 }
 
 glm::mat4 Camera::getViewMatrix()
@@ -30,14 +30,20 @@ glm::mat4 Camera::getProjectionMatrix()
     return this->projectionMatrix;
 }
 
-void Camera::UpdateViewMatrix()
+void Camera::updateViewMatrix()
 {
     this->viewMatrix = glm::lookAt(this->position, this->position + this->target, this->up);
 }
 
-void Camera::UpdateProjectionMatrix()
+void Camera::updateProjectionMatrix()
 {
     this->projectionMatrix = glm::perspective(glm::radians(this->fov), this->ratio, 0.1f, 100.0f); // near = min distance from camera to objects for rendering / far = max distance
+}
+
+void Camera::updateProjectionMatrix(float aspectRatio)
+{
+    this->projectionMatrix = glm::perspective(glm::radians(this->fov), aspectRatio, 0.1f, 100.0f); // near = min distance from camera to objects for rendering / far = max distance
+    notifyObservers();
 }
 glm::vec3 Camera::getPosition()
 {
@@ -47,7 +53,7 @@ glm::vec3 Camera::getPosition()
 void Camera::moveForward(float velocity)
 {
     this->position += this->target * (velocity * this->speed);
-    UpdateViewMatrix();
+    updateViewMatrix();
     notifyObservers();
 }
 
@@ -55,7 +61,7 @@ void Camera::moveBackward(float velocity)
 {
     this->position -= this->target * (velocity * this->speed);
 
-    UpdateViewMatrix();
+    updateViewMatrix();
 
     notifyObservers();
 }
@@ -66,7 +72,7 @@ void Camera::moveRight(float velocity)
 
     this->position += this->right * (velocity * this->speed);
 
-    UpdateViewMatrix();
+    updateViewMatrix();
     notifyObservers();
 
 }
@@ -77,7 +83,7 @@ void Camera::moveLeft(float velocity)
 
     this->position -= this->right * (velocity * this->speed);
 
-    UpdateViewMatrix();
+    updateViewMatrix();
     notifyObservers();
 }
 
@@ -97,7 +103,7 @@ void Camera::rotate(float deltaX, float deltaY)
     direction.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
     this->target = glm::normalize(direction);
 
-    UpdateViewMatrix();
+    updateViewMatrix();
     notifyObservers();
 }
 
@@ -108,6 +114,6 @@ void Camera::addObserver(Observer* observer)
 
 void Camera::notifyObservers() {
     for (Observer* observer : observers) {
-        observer->update();
+        observer->update(this);
     }
 }

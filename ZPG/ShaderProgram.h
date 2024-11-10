@@ -42,16 +42,18 @@ public:
 	void useProgram();
 	//GLuint getShaderProgram() const;
 	void setShaderProgram(GLuint program);
-	void SetMatrix(glm::mat4 Matrix);
-	void SetViewMatrix();
-	void SetProjectionMatrix();
-	void SetMatrixNormal(glm::mat3 normalMatrix);
-	void SetCameraViewPos();
+	void setMatrix(glm::mat4 Matrix);
+	void setViewMatrix();
+	void setProjectionMatrix();
+	void setMatrixNormal(glm::mat3 normalMatrix);
+	void setCameraViewPos();
 
-	void SetLightUniforms();
+	void setLightUniforms();
 
-	void SetObjectUniforms(glm::vec3& color);
+	void setObjectUniforms(glm::vec3& color);
 
-	void update() override;
+	void update(Subject* subject) override;
+
+	//void update() override;
 };
 

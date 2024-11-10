@@ -5,20 +5,27 @@ Transformation::Transformation() {
     modelMatrix = glm::mat4(1.0f);
 }
 
-void Transformation::AddComponent(TransformationComponent* tranformation)
+void Transformation::addComponent(TransformationComponent* tranformation)
 {
     this->transformations.push_back(tranformation);
-    UpdateModelMatrix();
+    updateModelMatrix();
    // this->modelMatrix = tranformation->Apply(this->modelMatrix);
 }
 
-void Transformation::UpdateModelMatrix() {
+void Transformation::updateModelMatrix() {
     this->modelMatrix = glm::mat4(1.0f);  // Start with the identity matrix
 
     // Apply all transformations in sequence
     for (auto& transformation : this->transformations) {
-        this->modelMatrix = transformation->Apply(this->modelMatrix);
+        this->modelMatrix = transformation->apply(this->modelMatrix);
     }
+}
+
+void Transformation::updateDynamicComponents() {
+    for (auto& transformation : transformations) {
+        transformation->dynamicUpdate();       
+    }
+    updateModelMatrix();
 }
 
 glm::mat4& Transformation::getMatrix() {

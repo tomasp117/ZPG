@@ -30,8 +30,12 @@ public:
     void setModel( Model* newModel);
     void setTransformation( Transformation* newTransformation);
 
-    void AddComponent(TransformationComponent* transformationComponent);    // Add a new transformation component (position, rotation, scale) to the object
+    void addComponent(TransformationComponent* transformationComponent);    // Add a new transformation component (position, rotation, scale) to the object
 
-    void SetColor(glm::vec3 color);
+
+    void updateTransformationDynamic();
+
+    void setColor(glm::vec3 color);
+    
 };
 

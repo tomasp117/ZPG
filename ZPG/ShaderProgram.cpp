@@ -120,12 +120,12 @@ void ShaderProgram::setShaderProgram(GLuint program) {
 	this->shaderProgram = program;
 }
 
-void ShaderProgram::SetMatrix(glm::mat4 Matrix)
+void ShaderProgram::setMatrix(glm::mat4 Matrix)
 {
 	GLuint uniform = glGetUniformLocation(this->shaderProgram, "modelMatrix");
 	glUniformMatrix4fv(uniform, 1, GL_FALSE, &Matrix[0][0]);
 }
-void ShaderProgram::SetViewMatrix()
+void ShaderProgram::setViewMatrix()
 {
 	// Získej view matici z kamery
 
@@ -139,7 +139,7 @@ void ShaderProgram::SetViewMatrix()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &viewMatrix[0][0]);
 	}
 }
-void ShaderProgram::SetProjectionMatrix()
+void ShaderProgram::setProjectionMatrix()
 {
 	//glm::mat4 projectionMatrix = this->camera->getProjectionMatrix();
 	GLint projectionLoc = glGetUniformLocation(this->shaderProgram, "projectionMatrix");
@@ -151,7 +151,7 @@ void ShaderProgram::SetProjectionMatrix()
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &camera->getProjectionMatrix()[0][0]);
 }
 
-void ShaderProgram::SetMatrixNormal(glm::mat3 normalMatrix)
+void ShaderProgram::setMatrixNormal(glm::mat3 normalMatrix)
 {
 	GLuint uniform = glGetUniformLocation(this->shaderProgram, "normalMatrix");
 	if (uniform == -1) {
@@ -161,7 +161,7 @@ void ShaderProgram::SetMatrixNormal(glm::mat3 normalMatrix)
 	glUniformMatrix3fv(uniform, 1, GL_FALSE, &normalMatrix[0][0]);
 }
 
-void ShaderProgram::SetCameraViewPos()
+void ShaderProgram::setCameraViewPos()
 {
 	GLint cameraViewLoc = glGetUniformLocation(this->shaderProgram, "viewPosition");
 
@@ -172,7 +172,7 @@ void ShaderProgram::SetCameraViewPos()
 	glUniform3fv(cameraViewLoc, 1, glm::value_ptr(camera->getPosition()));
 }
 
-void ShaderProgram::SetLightUniforms() {
+void ShaderProgram::setLightUniforms() {
 	GLint numLightsLoc = glGetUniformLocation(this->shaderProgram, "numLights");
 
 	if (numLightsLoc != -1) glUniform1i(numLightsLoc, lights.size());
@@ -183,9 +183,9 @@ void ShaderProgram::SetLightUniforms() {
 		GLint lightColorLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightColor").c_str());
 		GLint ambientStrengthLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].ambientStrength").c_str());
 
-		if (lightPosLoc != -1) glUniform3fv(lightPosLoc, 1, glm::value_ptr(lights[i]->GetLightPosition()));
-		if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(lights[i]->GetLightColor()));
-		if (ambientStrengthLoc != -1) glUniform1f(ambientStrengthLoc, lights[i]->GetAmbientStrength());
+		if (lightPosLoc != -1) glUniform3fv(lightPosLoc, 1, glm::value_ptr(lights[i]->getLightPosition()));
+		if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(lights[i]->getLightColor()));
+		if (ambientStrengthLoc != -1) glUniform1f(ambientStrengthLoc, lights[i]->getAmbientStrength());
 
 	}
 
@@ -198,23 +198,31 @@ void ShaderProgram::SetLightUniforms() {
 
 }
 
-void ShaderProgram::SetObjectUniforms(glm::vec3& color) {
+void ShaderProgram::setObjectUniforms(glm::vec3& color) {
 	GLint objectColorLoc = glGetUniformLocation(this->shaderProgram, "objectColor");
 	if (objectColorLoc != -1) {
 		glUniform3fv(objectColorLoc, 1, glm::value_ptr(color));
 	}
 }
 
-void ShaderProgram::update()
+void ShaderProgram::update(Subject* subject)
 {
 	useProgram();
 	
 	//camera
-	SetViewMatrix();
-	SetProjectionMatrix();
-	SetCameraViewPos();
-
+	if (typeid(*subject) == typeid(Camera)) {
+		setViewMatrix();
+		setProjectionMatrix();
+		setCameraViewPos();
+		//setLightUniforms();
+	}
 	//light
-	SetLightUniforms();
+	if (typeid(*subject) == typeid(Light)) { 
+		setLightUniforms();
+	}
+	
+
+	
+	
 	//SetObjectUniforms();
 }

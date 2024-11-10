@@ -5,6 +5,7 @@
 class TransformationComponent
 {
 public:
-	virtual glm::mat4 Apply(glm::mat4 matrix) = 0;
+	virtual glm::mat4 apply(glm::mat4 matrix) = 0;
+	virtual void dynamicUpdate() {}
 };
 

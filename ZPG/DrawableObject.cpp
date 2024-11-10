@@ -9,6 +9,10 @@ DrawableObject::DrawableObject(const float* points, size_t size, bool hasNormal,
     this->shaderProgram = new ShaderProgram(mode, first, count, camera, lights);
     this->shaderProgram->createShaderProgram(vertex_shader, fragment_shader);
 
+    for (Light* light : lights) {
+        light->notifyObservers();
+    }
+
     // Initialize model
     this->model = new Model();
     this->model->createBuffer(points, size, hasNormal);
@@ -62,22 +66,29 @@ Transformation* DrawableObject::getTransformation()
     return this->transformation;
 }
 
-void DrawableObject::AddComponent(TransformationComponent* transformationComponent) {
-    this->transformation->AddComponent(transformationComponent);
+void DrawableObject::addComponent(TransformationComponent* transformationComponent) {
+    this->transformation->addComponent(transformationComponent);
 }
 
-void DrawableObject::SetColor(glm::vec3 color)
+void DrawableObject::updateTransformationDynamic() {
+    this->transformation->updateDynamicComponents();
+    //printf("DYNAMIIIIIIC2\n");
+}
+
+void DrawableObject::setColor(glm::vec3 color)
 {
     this->objectColor = color;
 }
 
 
+
+
 void DrawableObject::render() {
     this->shaderProgram->useProgram();
 
-    this->shaderProgram->SetMatrix(this->getTransformation()->getMatrix()); // Pass the transformation matrix to the shader
+    this->shaderProgram->setMatrix(this->getTransformation()->getMatrix()); // Pass the transformation matrix to the shader
 
-    this->shaderProgram->SetObjectUniforms(this->objectColor);
+    this->shaderProgram->setObjectUniforms(this->objectColor);
 
     this->model->bindVAO();
 

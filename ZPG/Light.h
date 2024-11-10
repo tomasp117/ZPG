@@ -31,14 +31,14 @@ public:
     Light(glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrength);
 
     // Getters
-    glm::vec3 GetLightPosition();
-    glm::vec3 GetLightColor();
-    float GetAmbientStrength();
+    glm::vec3 getLightPosition();
+    glm::vec3 getLightColor();
+    float getAmbientStrength();
 
     // Setters
-    void SetLightPosition(glm::vec3 newPosition);
-    void SetLightColor(glm::vec3 newColor);
-    void SetAmbientStrength(float newAmbientStrength);
+    void setLightPosition(glm::vec3 newPosition);
+    void setLightColor(glm::vec3 newColor);
+    void setAmbientStrength(float newAmbientStrength);
 
     // Observer pattern functions to add observers and notify them of changes
     void addObserver(Observer* observer) override;

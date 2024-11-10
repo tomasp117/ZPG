@@ -41,10 +41,11 @@ public:
     // Getters
     glm::mat4 getViewMatrix();
     glm::mat4 getProjectionMatrix();
+    void updateProjectionMatrix(float aspectRatio);
     glm::vec3 getPosition();
     
-    void UpdateViewMatrix();                    // Updates the view matrix based on position, target, and up vector with lookAt function
-    void UpdateProjectionMatrix();              // Updates the projection matrix based on FOV and ratio with perspective function
+    void updateViewMatrix();                    // Updates the view matrix based on position, target, and up vector with lookAt function
+    void updateProjectionMatrix();              // Updates the projection matrix based on FOV and ratio with perspective function
 
     // Pohyb kamery
     void moveForward(float velocity);           // W

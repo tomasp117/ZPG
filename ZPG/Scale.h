@@ -7,6 +7,6 @@ private:
 
 public:
 	Scale(glm::vec3 scale);
-	glm::mat4 Apply(glm::mat4 matrix) override;
+	glm::mat4 apply(glm::mat4 matrix) override;
 };
 

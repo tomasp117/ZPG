@@ -9,36 +9,36 @@ Light::Light(glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrengt
 	this->ambientStrength = ambientStrength;
 }
 
-glm::vec3 Light::GetLightPosition()
+glm::vec3 Light::getLightPosition()
 {
 	return this->lightPosition;
 }
 
-glm::vec3 Light::GetLightColor()
+glm::vec3 Light::getLightColor()
 {
 	return this->lightColor;
 }
 
-float Light::GetAmbientStrength()
+float Light::getAmbientStrength()
 {
 	return this->ambientStrength;
 }
 
-void Light::SetLightPosition(glm::vec3 newPosition)
+void Light::setLightPosition(glm::vec3 newPosition)
 {
 	this->lightPosition = newPosition;
 
 	this->notifyObservers();
 }
 
-void Light::SetLightColor(glm::vec3 newColor)
+void Light::setLightColor(glm::vec3 newColor)
 {
 	this->lightColor = newColor;
 
 	this->notifyObservers();
 }
 
-void Light::SetAmbientStrength(float newAmbientStrength)
+void Light::setAmbientStrength(float newAmbientStrength)
 {
 	this->ambientStrength = newAmbientStrength;
 
@@ -54,6 +54,6 @@ void Light::notifyObservers()
 {
 	for (auto observer : this->observers)
 	{
-		observer->update();
+		observer->update(this);
 	}
 }

@@ -18,7 +18,8 @@ public:
 
     // Transformation functions
     Transformation();
-    void AddComponent(TransformationComponent* tranformation);
-    void UpdateModelMatrix();
+    void addComponent(TransformationComponent* tranformation);
+    void updateModelMatrix();
+    void updateDynamicComponents();
 };
 
