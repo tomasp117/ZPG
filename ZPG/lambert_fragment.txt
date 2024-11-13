@@ -6,6 +6,8 @@ struct Light {
     vec3 lightPosition;
     vec3 lightColor;
     float ambientStrength;
+    vec3 lightDir;
+    int lightType;
 };
 
 in vec3 fragNormal;
@@ -32,7 +34,13 @@ void main() {
         float diff = max(dot(norm, lightVector), 0.0);
         vec4 diffuse = diff * vec4(lights[i].lightColor, 1.0);
 
-        result += (ambient + diffuse) * attenuation;
+        float spot = dot(normalize(lightDir), -lightVector);
+
+        if (spot < 0.99) {
+            spec = 0; diff = 0;
+	    }
+        spot=(spot-0.99)/(1-0.99);
+        result += (ambient + diffuse * spot) * attenuation;
     }
 
     frag_colour = result * vec4(objectColor, 1.0);

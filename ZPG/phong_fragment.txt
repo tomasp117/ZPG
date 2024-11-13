@@ -17,7 +17,7 @@ uniform int numLights;
 uniform vec3 objectColor;
 uniform vec3 viewPosition;
 
-uniform float quadratic = 0.25;
+uniform float quadratic = 0.08;
 
 void main() {
     vec4 result = vec4(0.0);

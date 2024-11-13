@@ -182,10 +182,14 @@ void ShaderProgram::setLightUniforms() {
 		GLint lightPosLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightPosition").c_str());
 		GLint lightColorLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightColor").c_str());
 		GLint ambientStrengthLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].ambientStrength").c_str());
+		GLint lightDirLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightDir").c_str());
+		GLint lightTypeLoc = glGetUniformLocation(this->shaderProgram, ("lights[" + to_string(i) + "].lightType").c_str());
 
 		if (lightPosLoc != -1) glUniform3fv(lightPosLoc, 1, glm::value_ptr(lights[i]->getLightPosition()));
 		if (lightColorLoc != -1) glUniform3fv(lightColorLoc, 1, glm::value_ptr(lights[i]->getLightColor()));
 		if (ambientStrengthLoc != -1) glUniform1f(ambientStrengthLoc, lights[i]->getAmbientStrength());
+		if (lightDirLoc != -1) glUniform3fv(lightDirLoc, 1, glm::value_ptr(lights[i]->getLightDirection()));
+		if (lightTypeLoc != -1) glUniform1i(lightTypeLoc, lights[i]->getLightType());
 
 	}
 
