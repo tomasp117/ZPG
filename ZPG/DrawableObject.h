@@ -4,6 +4,9 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Light.h"
+#include "Material.h"
+
+
 class DrawableObject
 {
 private:
@@ -11,14 +14,14 @@ private:
     Model* model;                                                           // Model containing the VAO and VBO
     Transformation* transformation;                                         // Transformation (position, rotation, scaling)
     glm::vec3 objectColor;                                                  // Color of the object (default = green)
+	Material* material;
 
 public:
     // Constructors for creating drawable obejcts with new shader and model or with already declared before shader and model
-    DrawableObject(const float* points, size_t size, bool hasNormal, 
-        GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);
-    DrawableObject(const float* points, size_t size, bool hasNormal,
-        GLenum mode, GLint first, GLsizei count, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);
+    /*DrawableObject(const float* points, size_t size, bool hasNormal, 
+        GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);*/
     DrawableObject(Model* model, ShaderProgram* shader);
+	DrawableObject(Model* model, ShaderProgram* shader, Material* material);
 
     void render();                                                  
 

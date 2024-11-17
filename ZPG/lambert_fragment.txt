@@ -1,13 +1,26 @@
-#version 330
+#version 330 core
 
 #define MAX_LIGHTS 4
+#define NO_LIGHT 0
+#define POINT_LIGHT 1
+#define SPOT_LIGHT 2
+#define DIRECTIONAL_LIGHT 3
 
 struct Light {
-    vec3 lightPosition;
-    vec3 lightColor;
-    float ambientStrength;
-    vec3 lightDir;
-    int lightType;
+    vec3 lightPosition;   // Pozice svìtla
+    vec3 lightColor;      // Barva svìtla
+    float ambientStrength; // Síla ambientního svìtla
+    vec3 lightDirection;       // Smìr svìtla (pro spotlight a directional)
+    float cutOff;         // Úhel kužele pro spotlight (cosine hodnoty)
+    float outerCutOff;    // Vnìjší úhel kužele pro rozptýlený okraj (pro spotlight)
+    int lightType;             // Typ svìtla: POINT_LIGHT, SPOT_LIGHT, DIRECTIONAL_LIGHT
+};
+
+struct Material {
+    float ra; 
+    float rd;
+    float rs;  
+    float shininess;  
 };
 
 in vec3 fragNormal;
@@ -17,31 +30,67 @@ out vec4 frag_colour;
 uniform Light lights[MAX_LIGHTS];
 uniform int numLights;
 uniform vec3 objectColor;
+uniform vec3 viewPosition;
 
-uniform float quadratic = 0.25;
+uniform Material material;
+
+uniform float constant = 1.0;
+uniform float linear = 0.09;
+uniform float quadratic = 0.012;
 
 void main() {
-    vec4 result = vec4(0.0);
     vec3 norm = normalize(fragNormal);
+    vec3 result = vec3(0.0);
 
     for (int i = 0; i < numLights; i++) {
-        vec3 lightVector = normalize(lights[i].lightPosition - fragPos);
-        float distance = length(lights[i].lightPosition - fragPos);
-        float attenuation = 1.0 / (quadratic * (distance * distance));
+        if (lights[i].lightType == NO_LIGHT) {
+            continue;
+        }
+        vec3 lightDir;
+        float attenuation = 1.0;
 
-        vec4 ambient = vec4(lights[i].ambientStrength * lights[i].lightColor, 1.0);
+        // Rozlišení typu svìtla
+        if (lights[i].lightType == POINT_LIGHT) {
+            // Point Light: svìtlo vyzaøuje ze svého støedu
+            lightDir = normalize(lights[i].lightPosition - fragPos);
+            float distance = length(lights[i].lightPosition - fragPos);
+            attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
 
-        float diff = max(dot(norm, lightVector), 0.0);
-        vec4 diffuse = diff * vec4(lights[i].lightColor, 1.0);
+        } else if (lights[i].lightType == DIRECTIONAL_LIGHT) {
+            // Directional Light: svìtlo má pouze smìr
+            lightDir = normalize(-lights[i].lightDirection);
+            attenuation = 1.0;  // Directional light nemá útlum
 
-        float spot = dot(normalize(lightDir), -lightVector);
+        } else if (lights[i].lightType == SPOT_LIGHT) {
+            // Spotlight: svìtlo smìøuje v kuželu od svìtelného bodu
+            lightDir = normalize(lights[i].lightPosition - fragPos);
+            float distance = length(lights[i].lightPosition - fragPos);
+            attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
 
-        if (spot < 0.99) {
-            spec = 0; diff = 0;
-	    }
-        spot=(spot-0.99)/(1-0.99);
-        result += (ambient + diffuse * spot) * attenuation;
+            // Výpoèet intenzity kuželu
+            float theta = dot(lightDir, normalize(-lights[i].lightDirection));
+            float epsilon = lights[i].cutOff - lights[i].outerCutOff;
+            float intensity = clamp((theta - lights[i].outerCutOff) / epsilon, 0.0, 1.0);
+
+            // Úprava difúzní a spekulární složky pro spotlight efekt
+            attenuation *= intensity;
+        }
+
+        // Ambientní složka
+        vec3 ambient = lights[i].ambientStrength * lights[i].lightColor * material.ra;
+
+        // Difúzní složka
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diff * lights[i].lightColor * material.rd;
+
+    
+
+        // Výpoèet celkového efektu svìtla (ambient + diffuse) s útlumem
+        vec3 lightEffect = (ambient + diffuse) * attenuation;
+        result += lightEffect;
     }
 
-    frag_colour = result * vec4(objectColor, 1.0);
+    // Aplikace barvy objektu a výstup finální barvy fragmentu
+    result = result * objectColor;
+    frag_colour = vec4(result, 1.0);
 }

@@ -1,6 +1,7 @@
 #include "Light.h"
+#include "Camera.h"
 
-Light::Light(glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrength, glm::vec3 direction, int lightType)
+Light::Light(int id, glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrength, glm::vec3 direction, int lightType, float outerCutOff, float cutOff)
 {
 	this->lightPosition = lightPosition;
 
@@ -8,9 +9,20 @@ Light::Light(glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrengt
 
 	this->ambientStrength = ambientStrength;
 
+	this->id = id;
+
 	this->direction = direction;
-	
+
 	this->lightType = lightType;
+
+	this->outerCutOff = outerCutOff;
+
+	this->cutOff = cutOff;
+}
+
+int Light::getId()
+{
+	return this->id;
 }
 
 glm::vec3 Light::getLightPosition()
@@ -38,6 +50,16 @@ glm::vec3 Light::getLightDirection()
 	return this->direction;
 }
 
+float Light::getOuterCutOff()
+{
+	return this->outerCutOff;
+}
+
+float Light::getCutOff()
+{
+	return this->cutOff;
+}
+
 void Light::setLightPosition(glm::vec3 newPosition)
 {
 	this->lightPosition = newPosition;
@@ -59,9 +81,32 @@ void Light::setAmbientStrength(float newAmbientStrength)
 	this->notifyObservers();
 }
 
-void Light::setLightDiresction(glm::vec3 newLightDir)
+void Light::setLightDirection(glm::vec3 newLightDir)
 {
 	this->direction = newLightDir;
+
+	this->notifyObservers();
+}
+
+void Light::setLightType(int newLightType)
+{
+	this->lightType = newLightType;
+
+	this->notifyObservers();
+}
+
+void Light::setOuterCutOff(float newOuterCutOff)
+{
+	this->outerCutOff = newOuterCutOff;
+
+	this->notifyObservers();
+}
+
+void Light::setCutOff(float newCutOff)
+{
+	this->cutOff = newCutOff;
+
+	this->notifyObservers();
 }
 
 void Light::addObserver(Observer* observer)
@@ -75,4 +120,12 @@ void Light::notifyObservers()
 	{
 		observer->update(this);
 	}
+}
+
+void Light::update(Subject* subject)
+{
+	Camera* camera = (Camera*)subject;
+	setLightDirection(camera->getTarget());
+	setLightPosition(camera->getPosition());
+
 }

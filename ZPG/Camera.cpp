@@ -50,6 +50,11 @@ glm::vec3 Camera::getPosition()
     return this->position;
 }
 
+glm::vec3 Camera::getTarget()
+{
+    return this->target;
+}
+
 void Camera::moveForward(float velocity)
 {
     this->position += this->target * (velocity * this->speed);

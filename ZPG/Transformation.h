@@ -12,6 +12,9 @@ private:
     glm::mat4 modelMatrix;
     vector<TransformationComponent*> transformations;
 
+    vector<TransformationComponent*> dynamicTransformations;
+
+
 public:
     // Getter for the transformation matrix
     glm::mat4& getMatrix();

@@ -2,15 +2,14 @@
 #include "TransformationComponent.h"
 class Rotate : public TransformationComponent
 {
-private:
+protected:
 	float angle;
 	glm::vec3 axis;
-	float speed;
-	bool isDynamic;
+
+
 
 public:
-	Rotate(float angle, glm::vec3 axis, bool isDynamic);
+	Rotate(float angle, glm::vec3 axis);
 	glm::mat4 apply(glm::mat4 matrix) override;
-	void dynamicUpdate() override;
 };
 

@@ -20,34 +20,48 @@
 
 using namespace std;
 
-class Light : Subject
+class Light : public Subject, public Observer
 {
-	 glm::vec3 lightPosition; // Position of the light in world coordinates
-	 glm::vec3 lightColor; // Color of the light
-     float ambientStrength; // Ambient lighting strength
-     glm::vec3 direction;
-     int lightType;
+private:	 
+    int id;
 
+	glm::vec3 lightPosition; // Position of the light in world coordinates
+	glm::vec3 lightColor; // Color of the light
+    float ambientStrength; // Ambient lighting strength
+
+    glm::vec3 direction;
+    int lightType;
+
+	float outerCutOff;
+	float cutOff;
 
      vector<Observer*> observers; // List of observers to notify on changes
 public:
-    Light(glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrength, glm::vec3 direction, int lightType);
+	Light(int id, glm::vec3 lightPosition, glm::vec3 lightColor, float ambientStrength, glm::vec3 direction, int lightType, float outerCutOff, float cutOff);
 
     // Getters
+	int getId();
     glm::vec3 getLightPosition();
     glm::vec3 getLightColor();
     float getAmbientStrength();
     int getLightType();
     glm::vec3 getLightDirection();
+	float getOuterCutOff();
+	float getCutOff();
 
     // Setters
     void setLightPosition(glm::vec3 newPosition);
     void setLightColor(glm::vec3 newColor);
     void setAmbientStrength(float newAmbientStrength);
-    void setLightDiresction(glm::vec3 newLightDir);
+    void setLightDirection(glm::vec3 newLightDir);
+	void setLightType(int newLightType);
+	void setOuterCutOff(float newOuterCutOff);
+	void setCutOff(float newCutOff);
 
     // Observer pattern functions to add observers and notify them of changes
     void addObserver(Observer* observer) override;
     void notifyObservers() override;
+
+    void update(Subject* subject) override;
 };
 

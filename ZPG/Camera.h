@@ -43,6 +43,7 @@ public:
     glm::mat4 getProjectionMatrix();
     void updateProjectionMatrix(float aspectRatio);
     glm::vec3 getPosition();
+    glm::vec3 getTarget();
     
     void updateViewMatrix();                    // Updates the view matrix based on position, target, and up vector with lookAt function
     void updateProjectionMatrix();              // Updates the projection matrix based on FOV and ratio with perspective function

@@ -16,12 +16,13 @@
 #include "Camera.h"
 #include "ShaderLoader.h"
 #include "Light.h"
+#include "Material.h"
 
 using namespace std;
 
 class Camera;
 
-class ShaderProgram : Observer
+class ShaderProgram : public Observer
 {
 private:
 	GLenum mode;
@@ -29,28 +30,34 @@ private:
 	GLsizei count;
 	GLuint shaderProgram;
 	ShaderLoader* shaderLoader;
-	Camera* camera;
-	vector<Light*> lights;
+
+	int numLights;
+
 
 public:
-	ShaderProgram(GLenum mode, GLint first, GLsizei count, Camera* camera, vector<Light*> lights);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count, int numLights);
 	~ShaderProgram();
 	void createShaderProgram(const char* vertex_shader, const char* fragment_shader);
 	void checkLinking(GLuint shader);
 	void checkCompilation(GLuint shader);
 	void drawShaderArrays();
 	void useProgram();
+	void disableProgram();
 	//GLuint getShaderProgram() const;
 	void setShaderProgram(GLuint program);
 	void setMatrix(glm::mat4 Matrix);
-	void setViewMatrix();
-	void setProjectionMatrix();
+	void setViewMatrix(Camera* camera);
+	void setProjectionMatrix(Camera* camera);
 	void setMatrixNormal(glm::mat3 normalMatrix);
-	void setCameraViewPos();
+	void setCameraViewPos(Camera* camera);
 
-	void setLightUniforms();
+	void setNumberLights(int numLights);
+
+	void setLightUniforms(Light* light);
 
 	void setObjectUniforms(glm::vec3& color);
+
+	void setMaterialUniforms(Material* material);
 
 	void update(Subject* subject) override;
 

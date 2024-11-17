@@ -63,6 +63,7 @@ void Application::initialization()
 	this->sceneManager->initScene2();
 	this->sceneManager->initScene3();
 	this->sceneManager->initScene4();
+	this->sceneManager->initScene5();	
 
 }
 

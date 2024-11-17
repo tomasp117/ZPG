@@ -20,6 +20,8 @@
 #include <time.h>
 #include "Scene.h"
 
+#include "Material.h"
+
 using namespace std;
 
 class SceneManager
@@ -34,6 +36,7 @@ public:
 	void initScene2();
 	void initScene3();
 	void initScene4();
+	void initScene5();
 	Scene* getActiveScene();
 	void switchScene(); 
 

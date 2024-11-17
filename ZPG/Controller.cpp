@@ -12,7 +12,7 @@ void Controller::handleKeyInput(GLFWwindow* window, int key, int scancode, int a
 	vector<DrawableObject*> objects = activeScene->getObjects();
 
 	static float lastFrameTime = 0.0f;
-	float currentFrameTime = glfwGetTime();
+	float currentFrameTime = (float)glfwGetTime();
 	float deltaTime = currentFrameTime - lastFrameTime;
 
 	const float maxDeltaTime = 0.01f;
@@ -44,7 +44,7 @@ void Controller::handleCursorInput(GLFWwindow* window, double x, double y)
 	static bool firstMouse = true;
 	int rightButton = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 	if (rightButton == GLFW_PRESS) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		if (firstMouse) {
 			lastX = x;
 			lastY = y;
@@ -61,10 +61,10 @@ void Controller::handleCursorInput(GLFWwindow* window, double x, double y)
 		offsetX *= sensitivity;
 		offsetY *= sensitivity;
 
-		activeScene->getCamera()->rotate(offsetX, offsetY);
+		activeScene->getCamera()->rotate((float)offsetX, (float)offsetY);
 	}
 	else {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		firstMouse = true;
 	}
 }
