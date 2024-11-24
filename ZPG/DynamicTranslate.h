@@ -4,13 +4,13 @@
 class DynamicTranslate : public Translate
 {
 private:
-	glm::vec3 translate;
+	//glm::vec3 translate;
 	float speed;
 	bool isDynamic;
 
 public:
 	DynamicTranslate(glm::vec3 translate);
-	void dynamicUpdate() override;
+	void dynamicUpdate(float deltaTime) override;
 
 	bool getIsDynamic() override;
 };

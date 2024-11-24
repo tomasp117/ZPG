@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>lib\glew-2.2.0\include;lib\glfw-3.4.bin.WIN64\include;lib\glm-master;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib\glew-2.2.0\include;lib\glfw-3.4.bin.WIN64\include;lib\glm-master;lib\soil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>lib\glew-2.2.0\lib\Release\x64;lib\glfw-3.4.bin.WIN64\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;glu32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\glew-2.2.0\lib\Release\x64;lib\glfw-3.4.bin.WIN64\lib-vc2019;lib\soil\lib-vc2012\Platform_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;glu32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,7 +146,9 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="TransformationComponent.cpp" />
     <ClCompile Include="Translate.cpp" />
@@ -171,21 +173,28 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="skycube.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="suzi_flat.h" />
     <ClInclude Include="suzi_smooth.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="TransformationComponent.h" />
     <ClInclude Include="Translate.h" />
     <ClInclude Include="tree.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="blinn_fragment.txt" />
-    <Text Include="fragment_shader.txt" />
-    <Text Include="lambert_fragment.txt" />
-    <Text Include="phong_fragment.txt" />
-    <Text Include="vertex_shader.txt" />
+    <Text Include="blinn_fragment.glsl" />
+    <Text Include="constant_fragment.glsl" />
+    <Text Include="lambert_fragment.glsl" />
+    <Text Include="phong_fragment.glsl" />
+    <Text Include="vertex_shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="skybox_fragment.glsl" />
+    <None Include="skybox_vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

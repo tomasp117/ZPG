@@ -23,16 +23,24 @@ struct Material {
     float shininess;
 };
 
+
+
 in vec3 fragNormal;
 in vec3 fragPos;
+in vec2 uvt;
+
 out vec4 frag_colour;
+
+uniform sampler2D textureUnitID;
+uniform bool useTexture;
+
 
 uniform Light lights[MAX_LIGHTS];
 uniform int numLights;
 uniform vec3 objectColor;
 uniform vec3 viewPosition;
 
-uniform Material material;
+uniform Material material;  
 
 uniform float constant = 1.0;
 uniform float linear = 0.09;
@@ -49,7 +57,7 @@ void main() {
         }
         vec3 lightDir;
         float attenuation = 1.0;
-        
+
         if (lights[i].lightType == POINT_LIGHT) {
             lightDir = normalize(lights[i].lightPosition - fragPos);
             float distance = length(lights[i].lightPosition - fragPos);
@@ -70,19 +78,19 @@ void main() {
             attenuation *= intensity;
         }
 
-        vec3 ambient = lights[i].ambientStrength * lights[i].lightColor * material.ra;
+        vec3 ambient = lights[i].ambientStrength * lights[i].lightColor * material.ra; // ra
 
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lights[i].lightColor * material.rd;
+        vec3 diffuse = diff * lights[i].lightColor * material.rd; // rd
 
-        vec3 halfDir = normalize(lightDir + viewDir);
-        float spec = pow(max(dot(norm, halfDir), 0.0), material.shininess);
-        vec3 specular = spec * lights[i].lightColor * material.rs;
+        vec3 reflectDir = reflect(-lightDir, norm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess); // shininess
+        vec3 specular = spec * lights[i].lightColor * material.rs; // rs 
 
         vec3 lightEffect = (ambient + diffuse + specular) * attenuation;
         result += lightEffect;
     }
 
-    result = result * objectColor;
+    result = result * (useTexture ? vec3(texture(textureUnitID, uvt)) : objectColor);
     frag_colour = vec4(result, 1.0);
 }

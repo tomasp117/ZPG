@@ -5,16 +5,20 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Material.h"
+#include "Texture.h"
 
 
 class DrawableObject
 {
-private:
+protected:
     ShaderProgram* shaderProgram;                                           // Shader program used to draw the object
     Model* model;                                                           // Model containing the VAO and VBO
     Transformation* transformation;                                         // Transformation (position, rotation, scaling)
     glm::vec3 objectColor;                                                  // Color of the object (default = green)
 	Material* material;
+	Texture* texture; 
+
+
 
 public:
     // Constructors for creating drawable obejcts with new shader and model or with already declared before shader and model
@@ -22,8 +26,9 @@ public:
         GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);*/
     DrawableObject(Model* model, ShaderProgram* shader);
 	DrawableObject(Model* model, ShaderProgram* shader, Material* material);
-
-    void render();                                                  
+	DrawableObject(Model* model, ShaderProgram* shader, Material* material, Texture* texture);
+	DrawableObject(Model* model, ShaderProgram* shader, Texture* texture);
+    virtual void render();
 
     // Getters
     Transformation* getTransformation();
@@ -36,7 +41,7 @@ public:
     void addComponent(TransformationComponent* transformationComponent);    // Add a new transformation component (position, rotation, scale) to the object
 
 
-    void updateTransformationDynamic();
+    void updateTransformationDynamic(float deltaTime);
 
     void setColor(glm::vec3 color);
     

@@ -20,8 +20,13 @@ Model::~Model()
 	}
 }
 
-void Model::createBuffer(const float* points, size_t size, bool hasNormal)
+void Model::createBuffer(const float* points, size_t size, bool hasNormal, bool hasTexture)
 {
+	int stride = 3;
+	if (hasNormal)
+		stride += 3;
+	if (hasTexture)
+		stride += 2;
 	//Vertex Array Object (VAO)
 	glGenVertexArrays(1, &this->VAO); //generate the VAO
 	glBindVertexArray(this->VAO); //bind the VAO
@@ -33,12 +38,18 @@ void Model::createBuffer(const float* points, size_t size, bool hasNormal)
 	
 	// Enable and define vertex attribute for position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (GLvoid*)0);
 	
 	if (hasNormal) {
 		// Enable and define vertex attribute for normal
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+	}
+
+	if (hasTexture) {
+		// Enable and define vertex attribute for texture
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (GLvoid*)(6 * sizeof(float)));
 	}
 
 	// Unbind VAO and VBO to prevent accidental modification
@@ -50,6 +61,11 @@ void Model::createBuffer(const float* points, size_t size, bool hasNormal)
 void Model::bindVAO()
 {
 	glBindVertexArray(this->VAO);
+}
+
+void Model::unbindVAO()
+{
+	glBindVertexArray(0);
 }
 
 

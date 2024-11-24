@@ -59,6 +59,10 @@ public:
 
 	void setMaterialUniforms(Material* material);
 
+	void setTextureUnit(GLuint unit);
+
+	void setUseTexture(bool useTexture);
+
 	void update(Subject* subject) override;
 
 	//void update() override;

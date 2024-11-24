@@ -180,6 +180,20 @@ void ShaderProgram::setMaterialUniforms(Material* material)
 	if (shininessLoc != -1) glUniform1f(shininessLoc, material->getShininess());
 }
 
+void ShaderProgram::setTextureUnit(GLuint unit)
+{
+	GLint textureLoc = glGetUniformLocation(this->shaderProgram, "textureUnitID");
+	if (textureLoc != -1) glUniform1i(textureLoc, unit);
+}
+
+void ShaderProgram::setUseTexture(bool useTexture)
+{
+	GLint useTextureLoc = glGetUniformLocation(this->shaderProgram, "useTexture");
+	if (useTextureLoc != -1) glUniform1i(useTextureLoc, useTexture);
+}
+
+
+
 void ShaderProgram::update(Subject* subject)
 {
 	

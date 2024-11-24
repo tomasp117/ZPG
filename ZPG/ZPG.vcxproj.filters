@@ -75,6 +75,12 @@
     <ClCompile Include="DynamicTranslate.cpp">
       <Filter>Zdrojové soubory</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Zdrojové soubory</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Zdrojové soubory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -158,22 +164,35 @@
     <ClInclude Include="DynamicTranslate.h">
       <Filter>Hlavičkové soubory</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
+    <ClInclude Include="skycube.h">
+      <Filter>Hlavičkové soubory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="blinn_fragment.txt">
+    <Text Include="blinn_fragment.glsl">
       <Filter>Zdrojové soubory</Filter>
     </Text>
-    <Text Include="fragment_shader.txt">
+    <Text Include="constant_fragment.glsl">
       <Filter>Zdrojové soubory</Filter>
     </Text>
-    <Text Include="lambert_fragment.txt">
+    <Text Include="lambert_fragment.glsl">
       <Filter>Zdrojové soubory</Filter>
     </Text>
-    <Text Include="phong_fragment.txt">
+    <Text Include="phong_fragment.glsl">
       <Filter>Zdrojové soubory</Filter>
     </Text>
-    <Text Include="vertex_shader.txt">
+    <Text Include="vertex_shader.glsl">
       <Filter>Zdrojové soubory</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="skybox_vertex.glsl" />
+    <None Include="skybox_fragment.glsl" />
   </ItemGroup>
 </Project>

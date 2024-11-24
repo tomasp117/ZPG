@@ -9,7 +9,7 @@ private:
 
 public:
 	DynamicRotate(float angle, glm::vec3 axis);
-	void dynamicUpdate() override;
+	void dynamicUpdate(float deltaTime) override;
 
 	bool getIsDynamic() override;
 	

@@ -32,9 +32,19 @@ void Scene::setTransformationForAllObjects(Transformation* transformation) {
 }
 
 void Scene::render() {
+
+	if (objects.empty()) return;
+    float deltaTime = 0.016f;
+    if (skybox != nullptr) {
+        skybox->render();
+    }
+
+    // Clear the depth buffer to ensure the SkyBox doesn't interfere with objects
+    // glClear(GL_DEPTH_BUFFER_BIT);
+
     // Render all objects in the scene
     for (auto& object : objects) {
-        object->updateTransformationDynamic();
+        object->updateTransformationDynamic(deltaTime);
         object->render();  // Calls the object's render function       
     }
 }
@@ -48,6 +58,11 @@ std::vector<DrawableObject*> Scene::getObjects()
 Camera* Scene::getCamera()
 {
     return this->camera;
+}
+
+void Scene::setSkyBox(SkyBox* skybox)
+{
+	this->skybox = skybox;
 }
 
 

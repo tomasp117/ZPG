@@ -14,6 +14,7 @@ private:
 
     vector<TransformationComponent*> dynamicTransformations;
 
+	glm::vec3 position;
 
 public:
     // Getter for the transformation matrix
@@ -21,8 +22,10 @@ public:
 
     // Transformation functions
     Transformation();
+    void reset();
     void addComponent(TransformationComponent* tranformation);
     void updateModelMatrix();
-    void updateDynamicComponents();
+    void updateDynamicComponents(float deltaTime);
+    void setPosition(glm::vec3 position);
 };
 

@@ -21,6 +21,7 @@
 #include "Scene.h"
 
 #include "Material.h"
+#include "Texture.h"
 
 using namespace std;
 

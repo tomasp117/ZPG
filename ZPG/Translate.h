@@ -2,7 +2,7 @@
 #include "TransformationComponent.h"
 class Translate : public TransformationComponent
 {
-private:
+protected:
 	glm::vec3 translate; 
 	
 public:

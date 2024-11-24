@@ -4,6 +4,7 @@
 #include "tree.h"
 #include "bushes.h"
 #include "plain.h"
+#include "skycube.h"
 
 #include "Scale.h"
 #include "Rotate.h"
@@ -36,10 +37,15 @@ void SceneManager::initScene1() {
 	camera2->addObserver(lights2[0]);*/
 	scenes.push_back(new Scene(camera2));
 
-	float triangle[] = { 1.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.5f, 1.0f, 0.0f };
+	float triangle[] = {
+		// Position         // Normal           // Texture Coordinates
+		1.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,  // Vertex 1
+		2.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // Vertex 2
+		1.5f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.5f, 1.0f   // Vertex 3
+	};
 	size_t size_triangle = sizeof(triangle);
 	ShaderProgram* shader_triangle = new ShaderProgram(GL_TRIANGLES, 0, size_triangle / sizeof(float) / 3, lights2.size());
-	shader_triangle->createShaderProgram("vertex_shader.txt", "phong_fragment.txt");
+	shader_triangle->createShaderProgram("vertex_shader.glsl", "constant_fragment.glsl");
 
 	camera2->addObserver(shader_triangle);
 	
@@ -48,15 +54,56 @@ void SceneManager::initScene1() {
 	}
 
 	Model* model_triangle = new Model();
-	model_triangle->createBuffer(triangle, sizeof(triangle), false);
+	model_triangle->createBuffer(triangle, sizeof(triangle), true, true);
 
+	Material* material = new Material(1.0f, 1.0f, 1.0f, 32.0f);
+
+	Texture* texture = new Texture("grass.png");
 	
-	DrawableObject* triangle_object = new DrawableObject(model_triangle, shader_triangle);
+	Texture* texture2 = new Texture("wooden_fence.png");
+
+
+
+	ShaderProgram* shader_skybox = new ShaderProgram(GL_TRIANGLES, 0, sizeof(skycube) / sizeof(float) / 3, lights2.size());
+	shader_skybox->createShaderProgram("vertex_shader.glsl", "skybox_fragment.glsl");
+
+	Model* model_skybox = new Model();
+	model_skybox->createBuffer(skycube, sizeof(skycube), false, false);
+
+	camera2->addObserver(shader_skybox);
+
+	for (Light* light : lights2) {
+		light->addObserver(shader_skybox);
+	}
+
+	Texture* texture_skybox = new Texture("posx.jpg", "negx.jpg", "posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg");
+
+	SkyBox* skybox = new SkyBox(model_skybox, shader_skybox ,texture_skybox);
+	camera2->addObserver(skybox);
+
+	scenes[0]->setSkyBox(skybox);
+
+	DrawableObject* triangle_object = new DrawableObject(model_triangle, shader_triangle, material, texture);
 	triangle_object->addComponent(new Scale(glm::vec3(2.0f)));
 	triangle_object->addComponent(new Rotate(45.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
-	triangle_object->addComponent(new Scale(glm::vec3(0.5f)));
+	triangle_object->addComponent(new DynamicTranslate(glm::vec3(-1.0f, 0.0f, 0.0f)));
 	triangle_object->setColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Green
 	scenes[0]->addObject(triangle_object);
+
+	DrawableObject* triangle_object2 = new DrawableObject(model_triangle, shader_triangle, material, texture2);
+	triangle_object2->addComponent(new Scale(glm::vec3(2.0f)));
+	triangle_object2->addComponent(new Rotate(45.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
+	triangle_object2->addComponent(new Translate(glm::vec3(1.0f, 0.0f, 0.0f)));
+	triangle_object2->setColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Green
+	scenes[0]->addObject(triangle_object2);
+
+	DrawableObject* triangle_object3 = new DrawableObject(model_triangle, shader_triangle, material, texture);
+	triangle_object3->addComponent(new Scale(glm::vec3(2.0f)));
+	triangle_object3->addComponent(new Rotate(45.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
+	triangle_object3->addComponent(new Translate(glm::vec3(2.0f, 0.0f, 0.0f)));
+	triangle_object3->setColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Green
+	scenes[0]->addObject(triangle_object3);
+
 
 	float x_axis[] = {
 		-5.0f, 0.0f, 0.0f,
@@ -64,7 +111,7 @@ void SceneManager::initScene1() {
 	};
 
 	ShaderProgram* shader_lineX = new ShaderProgram(GL_LINES, 0, sizeof(x_axis) / sizeof(float) / 3, lights2.size());
-	shader_lineX->createShaderProgram("vertex_shader.txt", "fragment_shader.txt");
+	shader_lineX->createShaderProgram("vertex_shader.glsl", "constant_fragment.glsl");
 
 	camera2->addObserver(shader_lineX);
 	
@@ -74,7 +121,7 @@ void SceneManager::initScene1() {
 
 	
 	Model* model_linesX = new Model();
-	model_linesX->createBuffer(x_axis, sizeof(x_axis), false);
+	model_linesX->createBuffer(x_axis, sizeof(x_axis), false, false);
 
 	
 	DrawableObject* x_axis_object = new DrawableObject(model_linesX, shader_lineX);
@@ -89,7 +136,7 @@ void SceneManager::initScene1() {
 	};
 
 	ShaderProgram* shader_lineY = new ShaderProgram(GL_LINES, 0, sizeof(y_axis) / sizeof(float) / 3, lights2.size());
-	shader_lineY->createShaderProgram("vertex_shader.txt", "fragment_shader.txt");
+	shader_lineY->createShaderProgram("vertex_shader.glsl", "constant_fragment.glsl");
 
 	camera2->addObserver(shader_lineY);
 	
@@ -98,7 +145,7 @@ void SceneManager::initScene1() {
 	}
 
 	Model* model_linesY = new Model();
-	model_linesY->createBuffer(y_axis, sizeof(y_axis), false);
+	model_linesY->createBuffer(y_axis, sizeof(y_axis), false, false);
 
 	DrawableObject* y_axis_object = new DrawableObject(model_linesY, shader_lineY);
 	y_axis_object->setColor(glm::vec3(1.0f, 1.0f, 0.0f)); // Žlutá
@@ -112,7 +159,7 @@ void SceneManager::initScene1() {
 	};
 
 	ShaderProgram* shader_lineZ = new ShaderProgram(GL_LINES, 0, sizeof(z_axis) / sizeof(float) / 3, lights2.size());
-	shader_lineZ->createShaderProgram("vertex_shader.txt", "fragment_shader.txt");
+	shader_lineZ->createShaderProgram("vertex_shader.glsl", "constant_fragment.glsl");
 
 	camera2->addObserver(shader_lineZ);
 	
@@ -121,7 +168,7 @@ void SceneManager::initScene1() {
 	}
 
 	Model* model_linesZ = new Model();
-	model_linesZ->createBuffer(z_axis, sizeof(z_axis), false);
+	model_linesZ->createBuffer(z_axis, sizeof(z_axis), false, false);
 
 	DrawableObject* z_axis_object = new DrawableObject(model_linesZ, shader_lineZ);
 	z_axis_object->setColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Zelená
@@ -141,28 +188,26 @@ void SceneManager::initScene2() {
 
 	// Nastavení svìtel
 	vector<Light*> lights2;
-	lights2.push_back(new Light(0, glm::vec3(0.0f, 7.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.0f, glm::vec3(0.0f, 0.0f, 0.0f), 2, 25.5f, 6.5f));
-
+	lights2.push_back(new Light(0, glm::vec3(0.0f, 7.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f, glm::vec3(0.0f, 0.0f, 0.0f), 2, 25.5f, 6.5f));
+	//lights2.push_back(new Light(1, glm::vec3(0.0f, 3.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.0f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0, 0));
 	// Pøidání svìtel jako observerù kamery
-	for (auto light : lights2) {
-		camera2->addObserver(light);
-	}
+	camera2->addObserver(lights2[0]);
 	
 	// Vytvoøení scény s kamerou a svìtly
 	scenes.push_back(new Scene(camera2));
 
 	// Vytvoøení shaderù a modelù pro objekty
 	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights2.size());
-	shader->createShaderProgram("vertex_shader.txt", "blinn_fragment.txt");
+	shader->createShaderProgram("vertex_shader.glsl", "blinn_fragment.glsl");
 
 	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, lights2.size());
-	shader_b->createShaderProgram("vertex_shader.txt", "blinn_fragment.txt");
+	shader_b->createShaderProgram("vertex_shader.glsl", "blinn_fragment.glsl");
 
 	Model* model = new Model();
-	model->createBuffer(tree, sizeof(tree), true);
+	model->createBuffer(tree, sizeof(tree), true, false);
 
 	Model* model_b = new Model();
-	model_b->createBuffer(bushes, sizeof(bushes), true);
+	model_b->createBuffer(bushes, sizeof(bushes), true, false);
 
 	// Pøidání shaderù jako observerù kamery a svìtel
 	camera2->addObserver(shader);
@@ -175,20 +220,24 @@ void SceneManager::initScene2() {
 
 	// Pøidání plain objektu na scénu
 	Model* model_plain = new Model();
-	model_plain->createBuffer(plain, sizeof(plain), true);
+	model_plain->createBuffer(plain2, sizeof(plain2), true, true);
+
+
 
 	//generate model and shader program for plain	
 	ShaderProgram* shader2 = new ShaderProgram(GL_TRIANGLES, 0, 6, lights2.size());
-	shader2->createShaderProgram("vertex_shader.txt", "blinn_fragment.txt");
+	shader2->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
 
 	camera2->addObserver(shader2);
 	for (auto light : lights2) {
 		light->addObserver(shader2);
 	}
 
+	Texture* texture = new Texture("grass.png");
 
-	DrawableObject* plain_object = new DrawableObject(model_plain, shader2);
+	DrawableObject* plain_object = new DrawableObject(model_plain, shader2, texture);
 	plain_object->addComponent(new Scale(glm::vec3(10.0f)));
+	plain_object->setColor(glm::vec3(1.0f, 0.0f, 0.0f)); // Green
 	scenes[1]->addObject(plain_object);
 
 	// Generování stromù a keøù s náhodnými transformacemi
@@ -247,7 +296,7 @@ void SceneManager::initScene3() {
 
 	// Vytvoøení shaderu a modelu pro objekty
 	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights3.size());
-	shader->createShaderProgram("vertex_shader.txt", "phong_fragment.txt");
+	shader->createShaderProgram("vertex_shader.glsl", "phong_fragment.glsl");
 
 	// Pøidání shaderu jako observeru kamery a svìtel
 	camera3->addObserver(shader);
@@ -256,7 +305,7 @@ void SceneManager::initScene3() {
 	}
 
 	Model* model = new Model();
-	model->createBuffer(sphere, sizeof(sphere), true);
+	model->createBuffer(sphere, sizeof(sphere), true, false);
 
 	// Pøidání objektù na scénu
 	DrawableObject* sphere_object1 = new DrawableObject(model, shader, material);
@@ -306,16 +355,16 @@ void SceneManager::initScene4() {
 
 	// Vytvoøení shaderù a modelù pro objekty
 	ShaderProgram* shader1 = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights4.size());
-	shader1->createShaderProgram("vertex_shader.txt", "fragment_shader.txt");
+	shader1->createShaderProgram("vertex_shader.glsl", "constant_fragment.glsl");
 
 	ShaderProgram* shader2 = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights4.size());
-	shader2->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
+	shader2->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
 
 	ShaderProgram* shader3 = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights4.size());
-	shader3->createShaderProgram("vertex_shader.txt", "phong_fragment.txt");
+	shader3->createShaderProgram("vertex_shader.glsl", "phong_fragment.glsl");
 
 	ShaderProgram* shader4 = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights4.size());
-	shader4->createShaderProgram("vertex_shader.txt", "blinn_fragment.txt");
+	shader4->createShaderProgram("vertex_shader.glsl", "blinn_fragment.glsl");
 
 	// Pøidání shaderù jako observerù kamery a svìtel
 	camera4->addObserver(shader1);
@@ -331,10 +380,10 @@ void SceneManager::initScene4() {
 	}
 
 	Model* sphereModel = new Model();
-	sphereModel->createBuffer(sphere, sizeof(sphere), true);
+	sphereModel->createBuffer(sphere, sizeof(sphere), true, false);
 
 	Model* treeModel = new Model();
-	treeModel->createBuffer(tree, sizeof(tree), true);
+	treeModel->createBuffer(tree, sizeof(tree), true, false);
 
 	// Pøidání objektù na scénu
 	DrawableObject* sphere_object1 = new DrawableObject(sphereModel, shader1);
@@ -374,25 +423,44 @@ void SceneManager::initScene5() {
 	lights2.push_back(new Light(0, glm::vec3(-7.0f, 0.5f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.01f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
 	lights2.push_back(new Light(1, glm::vec3(7.0f, 0.5f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.01f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
 	lights2.push_back(new Light(2, glm::vec3(1.0f, 0.5f, 7.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.01f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
-	//lights2.push_back(new Light(3, glm::vec3(0.0f, 7.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
+	lights2.push_back(new Light(3, glm::vec3(0.0f, 11.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.07f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
 
 
 
 	// Vytvoøení scény s kamerou a svìtly
 	scenes.push_back(new Scene(camera2));
 
+	ShaderProgram* shader_skybox = new ShaderProgram(GL_TRIANGLES, 0, sizeof(skycube) / sizeof(float) / 3, lights2.size());
+	shader_skybox->createShaderProgram("vertex_shader.glsl", "skybox_fragment.glsl");
+
+	Model* model_skybox = new Model();
+	model_skybox->createBuffer(skycube, sizeof(skycube), false, false);
+
+	camera2->addObserver(shader_skybox);
+
+	for (Light* light : lights2) {
+		light->addObserver(shader_skybox);
+	}
+
+	Texture* texture_skybox = new Texture("posx.jpg", "negx.jpg", "posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg");
+
+	SkyBox* skybox = new SkyBox(model_skybox, shader_skybox, texture_skybox);
+	camera2->addObserver(skybox);
+
+	scenes[4]->setSkyBox(skybox);
+
 	// Vytvoøení shaderù a modelù pro objekty
 	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights2.size());
-	shader->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
+	shader->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
 
 	ShaderProgram* shader_b = new ShaderProgram(GL_TRIANGLES, 0, 8730, lights2.size());
-	shader_b->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
+	shader_b->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
 
 	Model* model = new Model();
-	model->createBuffer(tree, sizeof(tree), true);
+	model->createBuffer(tree, sizeof(tree), true, false);
 
 	Model* model_b = new Model();
-	model_b->createBuffer(bushes, sizeof(bushes), true);
+	model_b->createBuffer(bushes, sizeof(bushes), true, false);
 
 	// Pøidání shaderù jako observerù kamery a svìtel
 	camera2->addObserver(shader);
@@ -405,11 +473,13 @@ void SceneManager::initScene5() {
 
 	// Pøidání plain objektu na scénu
 	Model* model_plain = new Model();
-	model_plain->createBuffer(plain, sizeof(plain), true);
+	model_plain->createBuffer(plain2, sizeof(plain2), true, true);
 
+	Texture* texture = new Texture("grass.png");
+	Material* material = new Material(0.3f, 1.0f, 1.0f, 32.0f);
 	//generate model and shader program for plain	
 	ShaderProgram* shader2 = new ShaderProgram(GL_TRIANGLES, 0, 6, lights2.size());
-	shader2->createShaderProgram("vertex_shader.txt", "lambert_fragment.txt");
+	shader2->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
 
 	camera2->addObserver(shader2);
 	for (auto light : lights2) {
@@ -417,7 +487,7 @@ void SceneManager::initScene5() {
 	}
 
 
-	DrawableObject* plain_object = new DrawableObject(model_plain, shader2);
+	DrawableObject* plain_object = new DrawableObject(model_plain, shader2, material, texture);
 	plain_object->addComponent(new Scale(glm::vec3(10.0f)));
 	scenes[4]->addObject(plain_object);
 
@@ -431,7 +501,7 @@ void SceneManager::initScene5() {
 
 		DrawableObject* tree_object = new DrawableObject(model, shader);
 		tree_object->addComponent(new Scale(glm::vec3(scale_size_tree)));
-		tree_object->addComponent(new Translate(glm::vec3(0.0f)));
+		tree_object->addComponent(new Translate(randomPos_tree));
 		tree_object->addComponent(new DynamicRotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f)));
 		scenes[4]->addObject(tree_object);
 

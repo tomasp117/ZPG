@@ -22,13 +22,28 @@
 //    this->transformation = new Transformation(); // Initialize transformation
 //}
 
+// make only one constructor from this constructors using optional attributes
+
+//DrawableObject::DrawableObject(Model* model, ShaderProgram* shader, Material* material = nullptr, Texture* texture = nullptr) {
+//    this->shaderProgram = shader;
+//    this->model = model;
+//
+//    // Pokud material není pøedán, vytvoøí se výchozí
+//    this->material = material ? material : new Material(1.0f, 1.0f, 1.0f, 32.0f);
+//
+//    this->objectColor = glm::vec3(0.0f, 1.0f, 0.0f); // Defaultní barva
+//    this->transformation = new Transformation();
+//    this->texture = texture; // Pokud texture není pøedán, zùstane nullptr
+//}
+
 DrawableObject::DrawableObject(Model* model, ShaderProgram *shader)
 {
     this->shaderProgram = shader;
     this->model = model;
-	this->material = new Material(1.0f, 1.0f, 1.0f, 32.0f);
+	this->material = new Material(1.0f, 1.0f, 1.0f, 32.0f); // Default
     this->objectColor = glm::vec3(0.0f, 1.0f, 0.0f); // Default green
     this->transformation = new Transformation();
+	this->texture = nullptr;
 }
 
 DrawableObject::DrawableObject(Model* model, ShaderProgram* shader, Material* material)
@@ -38,6 +53,27 @@ DrawableObject::DrawableObject(Model* model, ShaderProgram* shader, Material* ma
 	this->material = material;
     this->objectColor = glm::vec3(0.0f, 1.0f, 0.0f); // Default
     this->transformation = new Transformation();
+	this->texture = nullptr;
+}
+
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shader, Material* material, Texture* texture)
+{
+    this->shaderProgram = shader;
+    this->model = model;
+    this->material = material;
+    this->objectColor = glm::vec3(0.0f, 1.0f, 0.0f); // Default
+    this->transformation = new Transformation();
+	this->texture = texture;
+}
+
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shader, Texture* texture)
+{
+    this->shaderProgram = shader;
+    this->model = model;
+	this->material = new Material(1.0f, 1.0f, 1.0f, 32.0f); // Default
+    this->objectColor = glm::vec3(0.0f, 1.0f, 0.0f); // Default
+    this->transformation = new Transformation();
+    this->texture = texture;
 }
 
 void DrawableObject::setShader(ShaderProgram* shader) {
@@ -61,8 +97,8 @@ void DrawableObject::addComponent(TransformationComponent* transformationCompone
     this->transformation->addComponent(transformationComponent);
 }
 
-void DrawableObject::updateTransformationDynamic() {
-    this->transformation->updateDynamicComponents();
+void DrawableObject::updateTransformationDynamic(float deltaTime) {
+    this->transformation->updateDynamicComponents(deltaTime);
 
 }
 
@@ -71,21 +107,33 @@ void DrawableObject::setColor(glm::vec3 color)
     this->objectColor = color;
 }
 
-
-
-
 void DrawableObject::render() {
     this->shaderProgram->useProgram();
 
     this->shaderProgram->setMatrix(this->getTransformation()->getMatrix()); // Pass the transformation matrix to the shader
 
-    this->shaderProgram->setObjectUniforms(this->objectColor);
-
 	this->shaderProgram->setMaterialUniforms(this->material);
+
+	
+	if (this->texture != nullptr) {
+		this->texture->bind(texture->getTextureID());
+		this->shaderProgram->setTextureUnit(texture->getTextureID());
+		this->shaderProgram->setUseTexture(true);
+	}
+    else {
+        this->shaderProgram->setObjectUniforms(this->objectColor);
+		this->shaderProgram->setUseTexture(false);
+    }
 
     this->model->bindVAO();
 
     this->shaderProgram->drawShaderArrays();
+
+    if (this->texture) {
+        this->texture->unbind();
+    }
+    
+	this->model->unbindVAO();
 
 	this->shaderProgram->disableProgram();
 }

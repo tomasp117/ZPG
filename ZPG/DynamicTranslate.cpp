@@ -3,13 +3,16 @@
 DynamicTranslate::DynamicTranslate(glm::vec3 translate) : Translate(translate)
 {
 	this->translate = translate;
-	this->speed = 0.5f;
+	this->speed = 5.0f;
 	this->isDynamic = true;
 }
 
-void DynamicTranslate::dynamicUpdate() {
-	this->translate.x += this->speed;
-	this->translate.z += this->speed;
+void DynamicTranslate::dynamicUpdate(float deltaTime) {
+	this->translate.x += this->speed*deltaTime;
+	this->translate.z += this->speed* deltaTime;
+
+	this->translate = glm::vec3(this->translate.x, 0.0f, this->translate.z);
+	printf("pos %f %f\n", this->translate.x, this->translate.z);
 
 }
 

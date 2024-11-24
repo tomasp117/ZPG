@@ -9,7 +9,8 @@ private:
 public:
 	Model();
 	~Model();
-	void createBuffer(const float* points, size_t size, bool hasNormal);
+	void createBuffer(const float* points, size_t size, bool hasNormal, bool hasTexture);
 	void bindVAO();
+	void unbindVAO();
 };
 
