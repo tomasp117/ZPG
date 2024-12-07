@@ -31,8 +31,11 @@ private:
 	float ratio;
 	int active_scene;
 	vector<Scene*> scenes;
+	int width;
+	int height;
+
 public:
-	SceneManager(float ratio);
+	SceneManager(float ratio, int width, int height);
 	void initScene1();
 	void initScene2();
 	void initScene3();

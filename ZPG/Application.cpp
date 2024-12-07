@@ -41,7 +41,7 @@ void Application::initialization()
 
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	this->sceneManager = new SceneManager(ratio);
+	this->sceneManager = new SceneManager(ratio, width, height);
 	controller = new Controller(this->window, this->sceneManager);
 	// Sets the key callback
 	glfwSetWindowUserPointer(this->window, this); // Adding pointer to Application

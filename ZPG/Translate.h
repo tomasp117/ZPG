@@ -7,6 +7,7 @@ protected:
 	
 public:
 	Translate(glm::vec3 translate);
-	glm::mat4 apply(glm::mat4 matrix) override;
+	// glm::mat4 apply(glm::mat4 matrix) override;
+	glm::mat4 getMatrix() override;
 };
 

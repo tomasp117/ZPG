@@ -88,9 +88,19 @@ void DrawableObject::setTransformation(Transformation* newTransformation) {
     this->transformation = newTransformation;
 }
 
+void DrawableObject::setID(int id)
+{
+	this->id = id;
+}
+
 Transformation* DrawableObject::getTransformation()
 {
     return this->transformation;
+}
+
+int DrawableObject::getID()
+{
+	return this->id;
 }
 
 void DrawableObject::addComponent(TransformationComponent* transformationComponent) {
@@ -127,7 +137,12 @@ void DrawableObject::render() {
 
     this->model->bindVAO();
 
-    this->shaderProgram->drawShaderArrays();
+	if (model->getNumIndices() > 0) {
+		this->shaderProgram->drawShaderElements();
+	}
+	else {
+		this->shaderProgram->drawShaderArrays();
+	}
 
     if (this->texture) {
         this->texture->unbind();

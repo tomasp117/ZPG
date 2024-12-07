@@ -55,6 +55,26 @@ glm::vec3 Camera::getTarget()
     return this->target;
 }
 
+int Camera::getWidth()
+{
+	return this->width;
+}
+
+int Camera::getHeight()
+{
+	return this->height;
+}
+
+void Camera::setWidth(int width)
+{
+	this->width = width;
+}
+
+void Camera::setHeight(int height)
+{
+	this->height = height;
+}
+
 void Camera::moveForward(float velocity)
 {
     this->position += this->target * (velocity * this->speed);

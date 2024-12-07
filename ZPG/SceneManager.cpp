@@ -15,10 +15,13 @@
 #include <random>
 #include <time.h>
 
-SceneManager::SceneManager(float ratio)
+SceneManager::SceneManager(float ratio, int width, int height)
 {
 	this->ratio = ratio;
 	this->active_scene = 0;
+	this->width = width;
+	this->height = height;
+
 }
 
 float getRandFloat(float min, float max) {
@@ -29,13 +32,15 @@ float getRandFloat(float min, float max) {
 
 void SceneManager::initScene1() {
 	Camera* camera2 = new Camera(glm::vec3(0.0f, 1.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, this->ratio);
+	camera2->setHeight(this->height);
+	camera2->setWidth(this->width);
 
 	vector<Light*> lights2;
-	lights2.push_back(new Light(0, glm::vec3(6.0f, 2.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
+	lights2.push_back(new Light(0, glm::vec3(6.0f, 5.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
 	/*
 	camera2->addObserver(lights2[1]);
 	camera2->addObserver(lights2[0]);*/
-	scenes.push_back(new Scene(camera2));
+	scenes.push_back(new Scene(camera2, lights2));
 
 	float triangle[] = {
 		// Position         // Normal           // Texture Coordinates
@@ -174,10 +179,30 @@ void SceneManager::initScene1() {
 	z_axis_object->setColor(glm::vec3(0.0f, 1.0f, 0.0f)); // Zelená
 	z_axis_object->addComponent(new Translate(glm::vec3(0.0f, 0.0f, 2.0f)));
 	scenes[0]->addObject(z_axis_object);
+
+	Model* model_house = new Model();
+	model_house->load("login.obj");
+
+	ShaderProgram* shader_house = new ShaderProgram(GL_TRIANGLES, 0, model_house->getNumIndices(), lights2.size());
+	shader_house->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
+
+	camera2->addObserver(shader_house);
+	for (Light* light : lights2) {
+		light->addObserver(shader_house);
+	}
+
+	Texture* texture_house = new Texture("grass.png");
+
+	DrawableObject* house_object = new DrawableObject(model_house, shader_house, material, texture_house);
+	house_object->addComponent(new Scale(glm::vec3(0.05f)));
+	scenes[0]->addObject(house_object);
+
+
 	camera2->notifyObservers();
 	for (Light* light : lights2) {
 		light->notifyObservers();
 	}
+
 	scenes[0]->getCamera()->rotate(-90.0f, 0.0f);
 
 }
@@ -185,16 +210,18 @@ void SceneManager::initScene1() {
 void SceneManager::initScene2() {
 	// Nastavení kamery
 	Camera* camera2 = new Camera(glm::vec3(0.0f, 10.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, this->ratio);
+	camera2->setHeight(this->height);
+	camera2->setWidth(this->width);
 
 	// Nastavení svìtel
 	vector<Light*> lights2;
-	lights2.push_back(new Light(0, glm::vec3(0.0f, 7.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f, glm::vec3(0.0f, 0.0f, 0.0f), 2, 25.5f, 6.5f));
+	lights2.push_back(new Light(0, glm::vec3(0.0f, 7.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.5f, glm::vec3(0.0f, 0.0f, 0.0f), 2, 25.5f, 6.5f));
 	//lights2.push_back(new Light(1, glm::vec3(0.0f, 3.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.0f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0, 0));
 	// Pøidání svìtel jako observerù kamery
 	camera2->addObserver(lights2[0]);
 	
 	// Vytvoøení scény s kamerou a svìtly
-	scenes.push_back(new Scene(camera2));
+	scenes.push_back(new Scene(camera2, lights2));
 
 	// Vytvoøení shaderù a modelù pro objekty
 	ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights2.size());
@@ -267,19 +294,40 @@ void SceneManager::initScene2() {
 			scenes[1]->addObject(bush_object);
 		}
 	}
+	
+	Model* model_house = new Model();
+	model_house->load("login.obj");
+
+	ShaderProgram* shader_house = new ShaderProgram(GL_TRIANGLES, 0, model_house->getNumIndices(), lights2.size());
+	shader_house->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
+
+	camera2->addObserver(shader_house);
+	for (Light* light : lights2) {
+		light->addObserver(shader_house);
+	}
+
+	Texture* texture_house = new Texture("house.png");
+
+	DrawableObject* house_object = new DrawableObject(model_house, shader_house, new Material(1.0f, 1.0f, 1.0f, 32.0f), texture_house);
+	house_object->addComponent(new Scale(glm::vec3(2.0f)));
+	house_object->addComponent(new Translate(glm::vec3(0.0f, 2.0f, -5.0f)));
+	scenes[1]->addObject(house_object);
 
 	// Oznámení observerùm a natoèení kamery
 	camera2->notifyObservers();
 	for (Light* light : lights2) {
 		light->notifyObservers();
 	}
+
+
 	scenes[1]->getCamera()->rotate(-90.0f, 0.0f);
 }
 
 void SceneManager::initScene3() {
 	// Nastavení kamery
 	Camera* camera3 = new Camera(glm::vec3(0.0f, 2.0f, -4.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
-
+	camera3->setHeight(this->height);
+	camera3->setWidth(this->width);
 	// Nastavení svìtel
 	vector<Light*> lights3;
 	lights3.push_back(new Light(0, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
@@ -287,7 +335,7 @@ void SceneManager::initScene3() {
 	
 
 	// Vytvoøení scény s kamerou a svìtly
-	scenes.push_back(new Scene(camera3));
+	scenes.push_back(new Scene(camera3, lights3));
 
 	Material* material = new Material(0.3f, 1.0f, 1.0f, 32.0f);
 	Material* material2 = new Material(1.0f, 0.2f, 1.0f, 32.0f);
@@ -339,7 +387,8 @@ void SceneManager::initScene3() {
 void SceneManager::initScene4() {
 	// Nastavení kamery
 	Camera* camera4 = new Camera(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, ratio);
-
+	camera4->setHeight(this->height);
+	camera4->setWidth(this->width);
 	// Nastavení svìtel
 	vector<Light*> lights4;
 	lights4.push_back(new Light(0, glm::vec3(0.0f, 5.0f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.1f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
@@ -351,7 +400,7 @@ void SceneManager::initScene4() {
 	}
 
 	// Vytvoøení scény s kamerou a svìtly
-	scenes.push_back(new Scene(camera4));
+	scenes.push_back(new Scene(camera4, lights4));
 
 	// Vytvoøení shaderù a modelù pro objekty
 	ShaderProgram* shader1 = new ShaderProgram(GL_TRIANGLES, 0, 92814, lights4.size());
@@ -417,7 +466,8 @@ void SceneManager::initScene4() {
 void SceneManager::initScene5() {
 	// Nastavení kamery
 	Camera* camera2 = new Camera(glm::vec3(0.0f, 10.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f), 60.0f, this->ratio);
-
+	camera2->setHeight(this->height);
+	camera2->setWidth(this->width);
 	// Nastavení svìtel
 	vector<Light*> lights2;
 	lights2.push_back(new Light(0, glm::vec3(-7.0f, 0.5f, 0.0f), glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 0.01f, glm::vec3(0.0f, 0.0f, 0.0f), 1, 0.0f, 0.0f));
@@ -428,7 +478,7 @@ void SceneManager::initScene5() {
 
 
 	// Vytvoøení scény s kamerou a svìtly
-	scenes.push_back(new Scene(camera2));
+	scenes.push_back(new Scene(camera2, lights2));
 
 	ShaderProgram* shader_skybox = new ShaderProgram(GL_TRIANGLES, 0, sizeof(skycube) / sizeof(float) / 3, lights2.size());
 	shader_skybox->createShaderProgram("vertex_shader.glsl", "skybox_fragment.glsl");
@@ -518,6 +568,47 @@ void SceneManager::initScene5() {
 			scenes[4]->addObject(bush_object);
 		}
 	}
+
+	Model* model_house = new Model();
+	model_house->load("house.obj");
+
+	ShaderProgram* shader_house = new ShaderProgram(GL_TRIANGLES, 0, model_house->getNumIndices(), lights2.size());
+	shader_house->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
+
+	camera2->addObserver(shader_house);
+	for (Light* light : lights2) {
+		light->addObserver(shader_house);
+	}
+
+	Texture* texture_house = new Texture("house.png");
+
+	DrawableObject* house_object = new DrawableObject(model_house, shader_house, new Material(1.0f, 1.0f, 1.0f, 32.0f), texture_house);	
+	house_object->addComponent(new Translate(glm::vec3(0.0f, 0.0f, -8.0f)));
+	house_object->addComponent(new Scale(glm::vec3(0.2f)));
+	scenes[4]->addObject(house_object);
+
+	// Login model
+	Model* model_login = new Model();
+	model_login->load("login.obj");
+
+	ShaderProgram* shader_login = new ShaderProgram(GL_TRIANGLES, 0, model_login->getNumIndices(), lights2.size());
+	shader_login->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
+
+	camera2->addObserver(shader_login);
+	for (Light* light : lights2) {
+		light->addObserver(shader_login);
+	}
+
+	Texture* texture_login = new Texture("grass.png");
+
+	DrawableObject* login_object = new DrawableObject(model_login, shader_login, new Material(1.0f, 1.0f, 1.0f, 32.0f), texture_login);
+	login_object->addComponent(new Translate(glm::vec3(0.0f, 4.0f, -8.0f)));
+	login_object->addComponent(new Scale(glm::vec3(2.0f)));
+
+	scenes[4]->addObject(login_object);
+
+
+
 
 	// Oznámení observerùm a natoèení kamery
 	camera2->notifyObservers();

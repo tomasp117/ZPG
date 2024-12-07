@@ -64,6 +64,13 @@ void ShaderProgram::drawShaderArrays()
 	glDrawArrays(this->mode, this->first, this->count);
 }
 
+void ShaderProgram::drawShaderElements()
+{
+	glDrawElements(this->mode, this->count, GL_UNSIGNED_INT, 0);
+}
+
+
+
 void ShaderProgram::useProgram()
 {
 	glUseProgram(this->shaderProgram);

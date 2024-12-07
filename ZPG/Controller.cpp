@@ -35,6 +35,32 @@ void Controller::handleKeyInput(GLFWwindow* window, int key, int scancode, int a
 		if (key == GLFW_KEY_A) activeScene->getCamera()->moveLeft(deltaTime);
 		if (key == GLFW_KEY_D) activeScene->getCamera()->moveRight(deltaTime);
 	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_INSERT) {
+		// Insert a new object
+		Model* model = new Model();
+		model->load("tree.obj");
+		ShaderProgram* shader = new ShaderProgram(GL_TRIANGLES, 0, model->getNumIndices(), 1);
+		shader->createShaderProgram("vertex_shader.glsl", "lambert_fragment.glsl");
+
+		activeScene->getCamera()->addObserver(shader);
+		
+		for (Light* light : activeScene->getLights()) {
+			light->addObserver(shader);
+		}
+
+		Texture* texture = new Texture("tree.png");
+		DrawableObject* object = new DrawableObject(model, shader, new Material(1.0f, 1.0f, 1.0f, 32.0f), texture);
+		object->addComponent(new Scale(glm::vec3(0.05f)));
+		
+		activeScene->InsertObject(object);
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_DELETE) {
+		// Delete the selected object
+		activeScene->deleteSelectedObject();
+		
+	}
 }
 
 void Controller::handleCursorInput(GLFWwindow* window, double x, double y)
@@ -73,7 +99,44 @@ void Controller::handleWindowResize(GLFWwindow* window, int width, int height)
 {
 	activeScene = sceneManager->getActiveScene();
 	activeScene->getCamera()->updateProjectionMatrix(width / (float)height);
+	activeScene->getCamera()->setWidth(width);
+	activeScene->getCamera()->setHeight(height);
 	glViewport(0, 0, width, height);
+}
+
+void Controller::handleButtonInput(GLFWwindow* window, int button, int action, int mode)
+{
+	activeScene = sceneManager->getActiveScene();
+	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
+	if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
+		GLbyte color[4];
+		GLfloat depth;
+		GLuint index;
+		// Get the cursor position
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		GLint x = (GLint)xpos;
+		GLint y = (GLint)ypos;
+		int newy = activeScene->getCamera()->getHeight() - y;
+		glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+		glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+		glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+
+		glm::vec3 screenX = glm::vec3(x, newy, depth);
+		glm::mat4 view = activeScene->getCamera()->getViewMatrix();	
+		glm::mat4 projection = activeScene->getCamera()->getProjectionMatrix();
+		glm::vec4 viewPort = glm::vec4(0, 0, activeScene->getCamera()->getWidth(), activeScene->getCamera()->getHeight());
+		glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);
+
+		activeScene->setInsertPosition(pos);
+
+		activeScene->setSelectedObject(index);
+		printf("unProject [%f,%f,%f]\n", pos.x, pos.y, pos.z);
+
+		printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth % f, stencil index % u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
+		//Mùžeme nastavit vybrané tìleso scena->setSelect(index-1);
+
+	}
 }
 
 void Controller::error_callback(int error, const char* description) { fputs(description, stderr); }
@@ -99,6 +162,7 @@ void Controller::cursor_callback(GLFWwindow* window, double x, double y) {
 }
 
 void Controller::button_callback(GLFWwindow* window, int button, int action, int mode) {
+	Controller* controller = (Controller*)glfwGetWindowUserPointer(window);
+	controller->handleButtonInput(window, button, action, mode);
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
-
 }

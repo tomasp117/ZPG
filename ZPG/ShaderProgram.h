@@ -41,6 +41,7 @@ public:
 	void checkLinking(GLuint shader);
 	void checkCompilation(GLuint shader);
 	void drawShaderArrays();
+	void drawShaderElements();
 	void useProgram();
 	void disableProgram();
 	//GLuint getShaderProgram() const;

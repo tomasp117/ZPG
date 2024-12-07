@@ -11,6 +11,7 @@
 class DrawableObject
 {
 protected:
+    int id;
     ShaderProgram* shaderProgram;                                           // Shader program used to draw the object
     Model* model;                                                           // Model containing the VAO and VBO
     Transformation* transformation;                                         // Transformation (position, rotation, scaling)
@@ -32,11 +33,13 @@ public:
 
     // Getters
     Transformation* getTransformation();
+	int getID();
 
     // Setters
     void setShader( ShaderProgram* shader);  
     void setModel( Model* newModel);
     void setTransformation( Transformation* newTransformation);
+	void setID(int id);
 
     void addComponent(TransformationComponent* transformationComponent);    // Add a new transformation component (position, rotation, scale) to the object
 

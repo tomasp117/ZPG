@@ -5,7 +5,12 @@ Scale::Scale(glm::vec3 scale)
     this->scale = scale;
 }
 
-glm::mat4 Scale::apply(glm::mat4 matrix)
+//glm::mat4 Scale::apply(glm::mat4 matrix)
+//{
+//    return glm::scale(matrix, this->scale);
+//}
+
+glm::mat4 Scale::getMatrix()
 {
-    return glm::scale(matrix, this->scale);
+	return glm::scale(glm::mat4(1.0f), this->scale);
 }

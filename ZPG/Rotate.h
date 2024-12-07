@@ -10,6 +10,7 @@ protected:
 
 public:
 	Rotate(float angle, glm::vec3 axis);
-	glm::mat4 apply(glm::mat4 matrix) override;
+	// glm::mat4 apply(glm::mat4 matrix) override;
+	glm::mat4 getMatrix();
 };
 

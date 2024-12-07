@@ -36,7 +36,8 @@ void Transformation::updateModelMatrix() {
 
     // Apply all transformations in sequence
     for (auto& transformation : this->transformations) {
-        this->modelMatrix = transformation->apply(this->modelMatrix);
+        //this->modelMatrix = transformation->apply(this->modelMatrix);
+		this->modelMatrix *= transformation->getMatrix();
     }
 }
 

@@ -22,6 +22,9 @@ private:
     float ratio;
     float speed;
 
+    int width;
+	int height;
+
     // Camera settings
     float yaw;                                  // Yaw rotation angle (horizontal)
     float pitch;                                // Pitch rotation angle (vertical)
@@ -44,6 +47,12 @@ public:
     void updateProjectionMatrix(float aspectRatio);
     glm::vec3 getPosition();
     glm::vec3 getTarget();
+	int getWidth();
+	int getHeight();
+
+	// Setters
+	void setWidth(int width);
+	void setHeight(int height);
     
     void updateViewMatrix();                    // Updates the view matrix based on position, target, and up vector with lookAt function
     void updateProjectionMatrix();              // Updates the projection matrix based on FOV and ratio with perspective function
