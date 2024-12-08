@@ -9,9 +9,11 @@ SkyBox::SkyBox(Model* model, ShaderProgram* shaderProgram, Texture* texture)
 
 void SkyBox::render()
 {
-
-	glDisable(GL_DEPTH_TEST);
-
+	if(followCamera)
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+	
 	this->shaderProgram->useProgram();
 
 	shaderProgram->setMatrix(this->getTransformation()->getMatrix()); // Pass the transformation matrix to the shader
@@ -50,11 +52,25 @@ void SkyBox::render()
 
 void SkyBox::update(Subject* subject)
 {
+	if (!followCamera)
+	{
+		return;
+	}
 	if (typeid(*subject) == typeid(Camera)) {
 		Camera* camera = (Camera*)subject;
 
 		this->getTransformation()->setPosition(camera->getPosition());
 	}
+}
+
+void SkyBox::setFollowCamera(bool follow)
+{
+	this->followCamera = follow;
+}
+
+bool SkyBox::getFollowCamera()
+{
+	return this->followCamera;
 }
 
 

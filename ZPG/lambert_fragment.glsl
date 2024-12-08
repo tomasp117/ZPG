@@ -7,18 +7,18 @@
 #define DIRECTIONAL_LIGHT 3
 
 struct Light {
-    vec3 lightPosition;   // Pozice svìtla
-    vec3 lightColor;      // Barva svìtla
-    float ambientStrength; // Síla ambientního svìtla
-    vec3 lightDirection;       // Smìr svìtla (pro spotlight a directional)
-    float cutOff;         // Úhel kužele pro spotlight (cosine hodnoty)
-    float outerCutOff;    // Vnìjší úhel kužele pro rozptýlený okraj (pro spotlight)
-    int lightType;             // Typ svìtla: POINT_LIGHT, SPOT_LIGHT, DIRECTIONAL_LIGHT
+    vec3 lightPosition;  
+    vec3 lightColor;      
+    float ambientStrength; 
+    vec3 lightDirection;     
+    float cutOff;         
+    float outerCutOff;    
+    int lightType;          
 };
 
 struct Material {
-    float ra; 
-    float rd;
+    float ra;   
+    float rd; 
     float rs;  
     float shininess;  
 };
@@ -48,54 +48,52 @@ void main() {
     vec3 result = vec3(0.0);
 
     for (int i = 0; i < numLights; i++) {
+
         if (lights[i].lightType == NO_LIGHT) {
             continue;
         }
+
         vec3 lightDir;
         float attenuation = 1.0;
 
-        // Rozlišení typu svìtla
         if (lights[i].lightType == POINT_LIGHT) {
-            // Point Light: svìtlo vyzaøuje ze svého støedu
+            
             lightDir = normalize(lights[i].lightPosition - fragPos);
             float distance = length(lights[i].lightPosition - fragPos);
             attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
 
         } else if (lights[i].lightType == DIRECTIONAL_LIGHT) {
-            // Directional Light: svìtlo má pouze smìr
+            
             lightDir = normalize(-lights[i].lightDirection);
-            attenuation = 1.0;  // Directional light nemá útlum
+            attenuation = 1.0;  
 
         } else if (lights[i].lightType == SPOT_LIGHT) {
-            // Spotlight: svìtlo smìøuje v kuželu od svìtelného bodu
+            
             lightDir = normalize(lights[i].lightPosition - fragPos);
             float distance = length(lights[i].lightPosition - fragPos);
             attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
 
-            // Výpoèet intenzity kuželu
+        
             float theta = dot(lightDir, normalize(-lights[i].lightDirection));
             float epsilon = lights[i].cutOff - lights[i].outerCutOff;
             float intensity = clamp((theta - lights[i].outerCutOff) / epsilon, 0.0, 1.0);
 
-            // Úprava difúzní a spekulární složky pro spotlight efekt
             attenuation *= intensity;
         }
 
-        // Ambientní složka
+     
         vec3 ambient = lights[i].ambientStrength * lights[i].lightColor * material.ra;
 
-        // Difúzní složka
+     
         float diff = max(dot(norm, lightDir), 0.0);
         vec3 diffuse = diff * lights[i].lightColor * material.rd;
 
     
 
-        // Výpoèet celkového efektu svìtla (ambient + diffuse) s útlumem
         vec3 lightEffect = (ambient + diffuse) * attenuation;
         result += lightEffect;
     }
 
-    // Aplikace barvy objektu a výstup finální barvy fragmentu
     result = result * (useTexture ? vec3(texture(textureUnitID, uvt)) : objectColor);
     frag_colour = vec4(result, 1.0);
 }

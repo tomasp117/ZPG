@@ -1,4 +1,7 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
 //Include GLEW
 #include <GL/glew.h>
 //Include GLFW  
@@ -22,6 +25,7 @@
 
 #include "Material.h"
 #include "Texture.h"
+#include "ModelFactory.h"
 
 using namespace std;
 
@@ -43,7 +47,10 @@ public:
 	void initScene5();
 	Scene* getActiveScene();
 	void switchScene(); 
+	ShaderProgram* createShader(const char* vertexShader, const char* fragmentShader, GLenum mode, int start, int count, vector<Light*> lights, Camera* camera);
 
 	vector<Scene*> getScenes();
+
+
 };
 

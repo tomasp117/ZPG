@@ -1,4 +1,8 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
+
 #include <GL/glew.h>
 #include <stdio.h>
 #include <stdlib.h>

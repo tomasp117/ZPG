@@ -43,6 +43,7 @@ void Application::initialization()
 
 	this->sceneManager = new SceneManager(ratio, width, height);
 	controller = new Controller(this->window, this->sceneManager);
+
 	// Sets the key callback
 	glfwSetWindowUserPointer(this->window, this); // Adding pointer to Application
 
@@ -58,7 +59,7 @@ void Application::initialization()
 
 	glfwSetWindowSizeCallback(this->window, controller->window_size_callback);
 
-	
+	// Initialize scenes
 	this->sceneManager->initScene1();
 	this->sceneManager->initScene2();
 	this->sceneManager->initScene3();
@@ -76,10 +77,11 @@ void Application::run()
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		sceneManager->getActiveScene()->render();
-		//glDrawArrays(GL_TRIANGLES, 0, 6); // two triangles
+		sceneManager->getActiveScene()->render(); // Render the active scene
+
 		// update other events like input handling
 		glfwPollEvents();
+
 		// put the stuff we’ve been drawing onto the display
 		glfwSwapBuffers(this->window);
 	}

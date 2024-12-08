@@ -1,4 +1,7 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
 #include "Model.h"
 #include "Transformation.h"
 #include "ShaderProgram.h"
@@ -11,25 +14,25 @@
 class DrawableObject
 {
 protected:
-    int id;
+	int id;																    // ID of the object
     ShaderProgram* shaderProgram;                                           // Shader program used to draw the object
     Model* model;                                                           // Model containing the VAO and VBO
     Transformation* transformation;                                         // Transformation (position, rotation, scaling)
     glm::vec3 objectColor;                                                  // Color of the object (default = green)
-	Material* material;
-	Texture* texture; 
+	Material* material; 													// Material of the object
+	Texture* texture; 														// Texture of the object
 
 
 
 public:
-    // Constructors for creating drawable obejcts with new shader and model or with already declared before shader and model
-    /*DrawableObject(const float* points, size_t size, bool hasNormal, 
-        GLenum mode, GLint first, const char* vertex_shader, const char* fragment_shader, Camera* camera, vector<Light*> lights);*/
+	// Constructors
+	// Yes this could be done with one constructor and functions to set the values, but this is more readable and easier to use
     DrawableObject(Model* model, ShaderProgram* shader);
 	DrawableObject(Model* model, ShaderProgram* shader, Material* material);
 	DrawableObject(Model* model, ShaderProgram* shader, Material* material, Texture* texture);
 	DrawableObject(Model* model, ShaderProgram* shader, Texture* texture);
-    virtual void render();
+
+	virtual void render(); 												// Render the object 
 
     // Getters
     Transformation* getTransformation();

@@ -1,4 +1,8 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -9,7 +13,7 @@ public:
 	virtual glm::mat4 getMatrix() = 0;
 
 	virtual void dynamicUpdate(float deltaTime) {};
-	virtual bool getIsDynamic() { return false; };
+	// virtual bool getIsDynamic() { return false; };
 };
 
 

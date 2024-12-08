@@ -1,4 +1,8 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
+// PRO0366 Tomáš Prorok 
 #include "TransformationComponent.h"
 class Scale : public TransformationComponent
 {

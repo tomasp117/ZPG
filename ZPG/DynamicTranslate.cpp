@@ -4,7 +4,7 @@ DynamicTranslate::DynamicTranslate(glm::vec3 translate) : Translate(translate)
 {
 	this->translate = translate;
 	this->speed = 5.0f;
-	this->isDynamic = true;
+	//this->isDynamic = true;
 }
 
 void DynamicTranslate::dynamicUpdate(float deltaTime) {
@@ -16,8 +16,8 @@ void DynamicTranslate::dynamicUpdate(float deltaTime) {
 
 }
 
-bool DynamicTranslate::getIsDynamic()
-{
-	return this->isDynamic;
-}
+//bool DynamicTranslate::getIsDynamic()
+//{
+//	return this->isDynamic;
+//}
 

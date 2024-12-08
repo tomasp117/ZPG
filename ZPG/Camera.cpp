@@ -20,7 +20,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float fov, float ratio)
     updateProjectionMatrix();
 }
 
-glm::mat4 Camera::getViewMatrix()
+glm::mat4 Camera::getViewMatrix() 
 {
     return this->viewMatrix;
 }
@@ -30,7 +30,7 @@ glm::mat4 Camera::getProjectionMatrix()
     return this->projectionMatrix;
 }
 
-void Camera::updateViewMatrix()
+void Camera::updateViewMatrix() 
 {
     this->viewMatrix = glm::lookAt(this->position, this->position + this->target, this->up);
 }
@@ -135,6 +135,13 @@ void Camera::rotate(float deltaX, float deltaY)
 void Camera::addObserver(Observer* observer)
 {
     observers.push_back(observer);
+	notifyObservers();
+}
+
+void Camera::removeObserver(Observer* observer)
+{
+	observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+
 }
 
 void Camera::notifyObservers() {

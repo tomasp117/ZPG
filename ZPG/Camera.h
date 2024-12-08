@@ -1,4 +1,7 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -19,11 +22,11 @@ private:
     glm::vec3 up;                               // Vector that determines the cameras tilt
     glm::vec3 right;                            // Right vector (something like up)
 
-    float ratio;
-    float speed;
+	float ratio;								// Aspect ratio
+	float speed;								// Camera speed
 
-    int width;
-	int height;
+	int width;                                  // Window width
+	int height;								    // Window height
 
     // Camera settings
     float yaw;                                  // Yaw rotation angle (horizontal)
@@ -43,29 +46,31 @@ public:
 
     // Getters
     glm::mat4 getViewMatrix();
-    glm::mat4 getProjectionMatrix();
-    void updateProjectionMatrix(float aspectRatio);
-    glm::vec3 getPosition();
-    glm::vec3 getTarget();
-	int getWidth();
+	glm::mat4 getProjectionMatrix();
+    void updateProjectionMatrix(float aspectRatio); // Updates the view matrix based on position, target, and up vector with lookAt function
+	glm::vec3 getPosition(); 
+	glm::vec3 getTarget(); 
+	int getWidth(); 
 	int getHeight();
 
 	// Setters
 	void setWidth(int width);
 	void setHeight(int height);
     
+	// Camera initialization
     void updateViewMatrix();                    // Updates the view matrix based on position, target, and up vector with lookAt function
     void updateProjectionMatrix();              // Updates the projection matrix based on FOV and ratio with perspective function
 
-    // Pohyb kamery
+	// Camera movement and rotation
     void moveForward(float velocity);           // W
     void moveBackward(float velocity);          // S
     void moveRight(float velocity);             // D
     void moveLeft(float velocity);              // A
-    void rotate(float deltaX, float deltaY);    // Mouse button one hold 
+    void rotate(float deltaX, float deltaY);    // Mouse button two hold 
 
     // Observer pattern functions to add observers and notify them of changes
     void addObserver(Observer* observer) override;
+    void removeObserver(Observer* observer) override;
     void notifyObservers() override;
 
 };

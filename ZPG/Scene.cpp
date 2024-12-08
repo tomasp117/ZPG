@@ -47,6 +47,9 @@ void Scene::render() {
         skybox->render();
     }
 
+	// render constant objects on the screne (top left corner)
+
+
     // Clear the depth buffer to ensure the SkyBox doesn't interfere with objects
     // glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -73,6 +76,11 @@ Camera* Scene::getCamera()
 vector<Light*> Scene::getLights()
 {
 	return this->lights;
+}
+
+SkyBox* Scene::getSkyBox()
+{
+	return this->skybox;
 }
 
 void Scene::setSkyBox(SkyBox* skybox)

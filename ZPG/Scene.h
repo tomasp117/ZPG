@@ -1,4 +1,8 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
+
 #include <vector>
 #include "DrawableObject.h"
 #include "ShaderProgram.h"
@@ -30,10 +34,13 @@ public:
     std::vector<DrawableObject*> getObjects();
     Camera* getCamera();
     vector<Light*> getLights();
+	SkyBox* getSkyBox();
 	void setSkyBox(SkyBox* skybox);
     void setInsertPosition(glm::vec3 position);
     void InsertObject(DrawableObject* object);
     void deleteSelectedObject();
 	void setSelectedObject(int id); 
+
+
 };
 

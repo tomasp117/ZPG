@@ -1,4 +1,8 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
+
 #include "Observer.h"
 #include "DrawableObject.h"
 
@@ -12,6 +16,8 @@ private:
 
 	glm::vec3 translate;
 
+	bool followCamera = true;
+
 public:
 
 	SkyBox(Model* model, ShaderProgram* shaderProgram, Texture* texture);
@@ -19,5 +25,8 @@ public:
 	void render() override;
 
 	void update(Subject* subject) override;
+
+	void setFollowCamera(bool follow);
+	bool getFollowCamera();
 };
 

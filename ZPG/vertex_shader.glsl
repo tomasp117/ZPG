@@ -17,10 +17,9 @@ uniform mat4 projectionMatrix;
 
 
 void main () {   
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);
-    fragPos = vec3(modelMatrix * vec4(vp, 1.0));
-    fragNormal = normalize(mat3(transpose(inverse(modelMatrix))) * vn);
-    texCoords = vp;
-    //fragNormal = transpose(inverse(mat3(modelMatrix))) * vn;
-    uvt = vt;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0); // transform position to clip space
+    fragPos = vec3(modelMatrix * vec4(vp, 1.0)); // get position in world space
+    fragNormal = normalize(mat3(transpose(inverse(modelMatrix))) * vn); // get normal in world space
+    texCoords = vp; // get texture coordinates
+    uvt = vt; // get uv coordinates
 };

@@ -124,8 +124,8 @@ void Light::notifyObservers()
 
 void Light::update(Subject* subject)
 {
-	Camera* camera = (Camera*)subject;
-	setLightDirection(camera->getTarget());
-	setLightPosition(camera->getPosition());
+	Camera* camera = (Camera*)subject; 
+	setLightDirection(camera->getTarget()); 
+	setLightPosition(camera->getPosition()); 
 
 }

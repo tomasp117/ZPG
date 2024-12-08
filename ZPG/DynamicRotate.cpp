@@ -5,7 +5,7 @@ DynamicRotate::DynamicRotate(float angle, glm::vec3 axis) : Rotate(angle, axis)
 	this->angle = angle;
 	this->axis = axis;
     this->speed = 30.0f;
-    this->isDynamic = true;
+    //this->isDynamic = true;
 }
 
 void DynamicRotate::dynamicUpdate(float deltaTime)
@@ -16,7 +16,7 @@ void DynamicRotate::dynamicUpdate(float deltaTime)
     if (this->angle > 360.0f) this->angle -= 360.0f;
 }
 
-bool DynamicRotate::getIsDynamic()
-{
-	return this->isDynamic;
-}
+//bool DynamicRotate::getIsDynamic()
+//{
+//	return this->isDynamic;
+//}

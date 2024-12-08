@@ -1,5 +1,7 @@
 #pragma once
 
+// PRO0366 Tomáš Prorok 
+
 #include "ShaderProgram.h"
 #include "Model.h"
 #include "sphere.h"
@@ -32,11 +34,11 @@ private:
 
 
 public:
-	Controller(GLFWwindow* window, SceneManager* sceneManager);
-	void handleKeyInput(GLFWwindow* window, int key, int scancode, int action, int mods);
-	void handleCursorInput(GLFWwindow* window, double x, double y);
-	void handleWindowResize(GLFWwindow* window, int width, int height);
-	void handleButtonInput(GLFWwindow* window, int button, int action, int mode);
+	Controller(GLFWwindow* window, SceneManager* sceneManager); 
+	void handleKeyInput(GLFWwindow* window, int key, int scancode, int action, int mods); // Handles key input
+	void handleCursorInput(GLFWwindow* window, double x, double y); // Handles cursor input
+	void handleWindowResize(GLFWwindow* window, int width, int height); // Handles window resize
+	void handleButtonInput(GLFWwindow* window, int button, int action, int mode); // Handles button input
 
 
 	static void error_callback(int error, const char* description);

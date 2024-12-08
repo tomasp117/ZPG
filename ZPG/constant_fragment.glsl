@@ -9,10 +9,5 @@ uniform bool useTexture;
 in vec2 uvt;
 
 void main () {
-    //frag_colour = vec4(objectColor, 1.0);
-
-    if (useTexture)
-        frag_colour = texture(textureUnitID, uvt);
-    else
-        frag_colour = vec4(objectColor, 1.0);
+    frag_colour = useTexture ? texture(textureUnitID, uvt) : vec4(objectColor, 1.0);
 }

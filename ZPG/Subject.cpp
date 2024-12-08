@@ -4,5 +4,11 @@ void Subject::addObserver(Observer* observer)
 {
 }
 
-void Subject::notifyObservers() {
+void Subject::removeObserver(Observer* observer)
+{
 }
+
+void Subject::notifyObservers()
+{
+}
+

@@ -1,4 +1,7 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
 #include <GL/glew.h>
 #include <stdio.h>
 
@@ -21,15 +24,15 @@ private:
 	GLuint VBO;
 	GLuint IBO;
 
-	int numIndices;
+	int numIndices; // Number of indices in the model for rendering
 
 public:
 	Model();
 	~Model();
-	void createBuffer(const float* points, size_t size, bool hasNormal, bool hasTexture);
+	void createBuffer(const float* points, size_t size, bool hasNormal, bool hasTexture); // Create buffer for model
 	void bindVAO();
 	void unbindVAO();
-	void load(std::string fileName);
+	void load(std::string fileName); // Load model from file
 	int getNumIndices();
 };
 

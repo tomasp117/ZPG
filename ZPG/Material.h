@@ -1,4 +1,7 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok
+
 class Material
 {
 private:

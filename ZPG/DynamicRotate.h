@@ -1,17 +1,21 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
 #include "Rotate.h"
 
-class DynamicRotate : public Rotate
+class DynamicRotate : public Rotate 
 {
 private:
-	float speed;
-	bool isDynamic;
+	float speed; // Speed of the rotation
+	bool isDynamic; // Is the rotation dynamic
 
 public:
 	DynamicRotate(float angle, glm::vec3 axis);
-	void dynamicUpdate(float deltaTime) override;
 
-	bool getIsDynamic() override;
+	void dynamicUpdate(float deltaTime) override; // Update the rotation
+
+	// bool getIsDynamic() override; 
 	
 };
 

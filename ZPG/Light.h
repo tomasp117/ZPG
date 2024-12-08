@@ -1,4 +1,7 @@
 #pragma once
+
+// PRO0366 Tomáš Prorok 
+
 //Include GLEW
 #include <GL/glew.h>
 //Include GLFW  
@@ -29,11 +32,11 @@ private:
 	glm::vec3 lightColor; // Color of the light
     float ambientStrength; // Ambient lighting strength
 
-    glm::vec3 direction;
-    int lightType;
+	glm::vec3 direction; // Direction of the light
+    int lightType; 
 
-	float outerCutOff;
-	float cutOff;
+	float outerCutOff; // Outer cut off angle for spotlights
+	float cutOff; // Cut off angle for spotlights
 
      vector<Observer*> observers; // List of observers to notify on changes
 public:
@@ -62,6 +65,6 @@ public:
     void addObserver(Observer* observer) override;
     void notifyObservers() override;
 
-    void update(Subject* subject) override;
+    void update(Subject* subject) override; 
 };
 

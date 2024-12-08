@@ -78,16 +78,16 @@ void main() {
             attenuation *= intensity;
         }
 
-        vec3 ambient = lights[i].ambientStrength * lights[i].lightColor * material.ra; // ra
+        vec3 ambient = lights[i].ambientStrength * lights[i].lightColor * material.ra;
 
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lights[i].lightColor * material.rd; // rd
+        vec3 diffuse = diff * lights[i].lightColor * material.rd;
 
         vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess); // shininess
-        vec3 specular = spec * lights[i].lightColor * material.rs; // rs 
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess); 
+        vec3 specular = spec * lights[i].lightColor * material.rs;
 
-        vec3 lightEffect = (ambient + diffuse + specular) * attenuation;
+        vec3 lightEffect = (ambient + diffuse + specular) * attenuation; // Calculation of phong lighting model = ambient + diffuse + specular
         result += lightEffect;
     }
 

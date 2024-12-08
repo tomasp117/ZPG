@@ -1,5 +1,7 @@
 #pragma once
 
+// PRO0366 Tomáš Prorok 
+
 #include "Controller.h"
 
 #include <random>
